@@ -1,0 +1,693 @@
+:root {
+  --vw-blue-dark: #001E50;
+  --vw-blue-primary: #004078;
+  --vw-cyan: #00A8E8;
+  --vw-white: #FFFFFF;
+  --vw-gray-light: #F2F4F8;
+  --vw-gray-medium: #E2E8F0;
+  --vw-gray-dark: #64748B;
+  --vw-success: #10B981;
+  --vw-text-dark: #0F172A;
+  
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+  --shadow-card: 0 10px 30px rgba(0, 30, 80, 0.15);
+  --shadow-button: 0 4px 12px rgba(0, 64, 120, 0.25);
+}
+
+.recommendation-container {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--vw-gray-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.recommendation-header {
+  height: 80px;
+  background: var(--vw-white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--vw-blue-dark);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.back-button:hover {
+  background: var(--vw-gray-light);
+}
+
+.header-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.header-logo .brand {
+  font-weight: 900;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: var(--vw-blue-dark);
+  letter-spacing: -0.5px;
+}
+
+.header-logo .sub-brand {
+  font-weight: 400;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--vw-blue-primary);
+  opacity: 0.8;
+}
+
+.recommendation-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-container {
+  margin-bottom: 3rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--vw-gray-medium);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--vw-cyan);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: var(--vw-gray-dark);
+  font-weight: 500;
+}
+
+.question-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.question-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--vw-text-dark);
+  margin-bottom: 3rem;
+  line-height: 1.2;
+}
+
+.question-input {
+  background: var(--vw-white);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* Manual Input Styles */
+.manual-input-container {
+  padding: 1rem;
+}
+
+.input-with-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.manual-input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.manual-input {
+  width: 200px;
+  padding: 1rem 1.5rem;
+  border: 3px solid var(--vw-gray-medium);
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--vw-blue-dark);
+  background: var(--vw-white);
+  transition: all 0.3s ease;
+}
+
+.manual-input:focus {
+  outline: none;
+  border-color: var(--vw-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.2);
+}
+
+.manual-input::-webkit-inner-spin-button,
+.manual-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.manual-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.input-unit {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--vw-gray-dark);
+}
+
+.slider-reference {
+  margin: 1rem 0;
+}
+
+.slider-reference .range-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, var(--vw-gray-medium), var(--vw-cyan));
+  border-radius: 3px;
+  outline: none;
+  margin: 1rem 0;
+}
+
+.slider-reference .range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--vw-blue-dark);
+  cursor: pointer;
+  border: 3px solid var(--vw-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.slider-reference .range-slider::-webkit-slider-thumb:hover {
+  background: var(--vw-cyan);
+  transform: scale(1.1);
+}
+
+.current-value-display {
+  text-align: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--vw-blue-dark), var(--vw-blue-primary));
+  border-radius: var(--border-radius-lg);
+  color: var(--vw-white);
+  margin-top: 1rem;
+}
+
+.current-value-label {
+  display: block;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.current-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* Range Input */
+.range-input-container {
+  padding: 1rem;
+}
+
+.range-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--vw-gray-medium);
+  border-radius: 3px;
+  outline: none;
+  margin: 2rem 0;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--vw-cyan);
+  cursor: pointer;
+  border: 3px solid var(--vw-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.range-value {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.value-display {
+  display: inline-block;
+  background: var(--vw-blue-dark);
+  color: var(--vw-white);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  min-width: 120px;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--vw-gray-dark);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Select Input */
+.select-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--vw-gray-medium);
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--vw-text-dark);
+  background: var(--vw-white);
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: var(--vw-cyan);
+}
+
+/* Radio Input */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid var(--vw-gray-medium);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radio-option:hover {
+  border-color: var(--vw-cyan);
+  background: rgba(0, 168, 232, 0.05);
+}
+
+.radio-option input {
+  display: none;
+}
+
+.radio-option input:checked + .radio-custom {
+  border-color: var(--vw-cyan);
+  background: var(--vw-cyan);
+}
+
+.radio-option input:checked + .radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: var(--vw-white);
+  border-radius: 50%;
+}
+
+.radio-option input:checked ~ .radio-text {
+  color: var(--vw-blue-dark);
+  font-weight: 600;
+}
+
+.radio-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vw-gray-dark);
+  border-radius: 50%;
+  margin-right: 1rem;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.radio-text {
+  font-size: 1rem;
+  color: var(--vw-text-dark);
+}
+
+/* Multi Select */
+.multi-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.multi-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid var(--vw-gray-medium);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.multi-option:hover {
+  border-color: var(--vw-cyan);
+  background: rgba(0, 168, 232, 0.05);
+}
+
+.multi-option input {
+  display: none;
+}
+
+.multi-option input:checked + .multi-custom {
+  background: var(--vw-success);
+  border-color: var(--vw-success);
+}
+
+.multi-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vw-gray-dark);
+  border-radius: 6px;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.multi-custom svg {
+  color: var(--vw-white);
+}
+
+.multi-option input:checked ~ .multi-text {
+  color: var(--vw-success);
+  font-weight: 600;
+}
+
+.multi-text {
+  font-size: 1rem;
+  color: var(--vw-text-dark);
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--vw-gray-medium);
+}
+
+.btn-primary, .btn-secondary {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--vw-cyan);
+  color: var(--vw-white);
+  box-shadow: var(--shadow-button);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--vw-blue-primary);
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--vw-white);
+  color: var(--vw-blue-dark);
+  border: 2px solid var(--vw-gray-medium);
+}
+
+.btn-secondary:hover {
+  border-color: var(--vw-cyan);
+  background: rgba(0, 168, 232, 0.05);
+}
+
+/* Result Page */
+.recommendation-result {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.result-icon {
+  background: var(--vw-cyan);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--vw-white);
+}
+
+.result-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--vw-text-dark);
+  margin-bottom: 1rem;
+}
+
+.result-subtitle {
+  font-size: 1.1rem;
+  color: var(--vw-gray-dark);
+}
+
+.truck-card {
+  background: var(--vw-white);
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.truck-image {
+  height: 100%;
+  min-height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.truck-info {
+  padding: 2.5rem;
+}
+
+.truck-model {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.truck-model h2 {
+  font-size: 2.2rem;
+  color: var(--vw-blue-dark);
+  margin: 0;
+}
+
+.truck-series {
+  background: var(--vw-cyan);
+  color: var(--vw-white);
+  padding: 0.25rem 1rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.truck-description {
+  font-size: 1.1rem;
+  color: var(--vw-gray-dark);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.spec-item {
+  background: var(--vw-gray-light);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.spec-label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--vw-gray-dark);
+  margin-bottom: 0.25rem;
+}
+
+.spec-value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--vw-blue-dark);
+}
+
+.features-list h3 {
+  font-size: 1.2rem;
+  color: var(--vw-text-dark);
+  margin-bottom: 1rem;
+}
+
+.features-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  color: var(--vw-gray-dark);
+}
+
+.features-list li svg {
+  color: var(--vw-success);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.action-buttons .btn-primary {
+  flex: 2;
+}
+
+.action-buttons .btn-secondary {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .recommendation-content {
+    padding: 1.5rem;
+  }
+  
+  .question-title {
+    font-size: 1.75rem;
+  }
+  
+  .multi-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .truck-card {
+    grid-template-columns: 1fr;
+  }
+  
+  .truck-image {
+    min-height: 250px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .manual-input-wrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .manual-input {
+    width: 100%;
+    max-width: 200px;
+    font-size: 1.2rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .current-value-display {
+    padding: 1rem;
+  }
+  
+  .current-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* Informação de ajuda */
+.input-help-text {
+  text-align: center;
+  color: var(--vw-gray-dark);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}

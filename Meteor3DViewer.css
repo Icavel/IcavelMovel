@@ -1,0 +1,57 @@
+/* src/components/Meteor3DViewer.css */
+.viewer-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.7s ease-in-out;
+}
+
+.viewer-ambient-light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, transparent, rgba(0, 0, 0, 0.1));
+  pointer-events: none;
+}
+
+.viewer-model {
+  position: relative;
+  transition: all 0.5s;
+  transform-origin: center;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.4));
+}
+
+.viewer-image {
+  object-fit: contain;
+  max-height: 70vh;
+  width: auto;
+  transition: all 0.5s;
+}
+
+.viewer-color-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.viewer-shadow {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  filter: blur(16px);
+  border-radius: 50%;
+}

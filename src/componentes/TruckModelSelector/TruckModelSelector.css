@@ -1,0 +1,646 @@
+/* src/components/TruckModelSelector/TruckModelSelector.css */
+
+:root {
+   --vw-blue: #001E50;
+  --vw-blue-light: #00B1EB;
+  --vw-gray-100: #F8F9FA;
+  --vw-gray-200: #E9ECEF;
+  --vw-gray-text: #495057;
+  --vw-white: #FFFFFF;
+  --meteor-accent: #D44D25;
+  --best-seller-accent: #FF6B35;
+  --best-seller-bg: #FFF5F0;
+  --radius-card: 12px;
+  --radius-btn: 24px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.15);
+}
+
+.best-sellers-section {
+  padding: 1.5rem 1.5rem 0.5rem;
+  background: var(--vw-white);
+  border-bottom: 1px solid var(--vw-gray-200);
+}
+
+.best-sellers-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.trending-icon {
+  color: var(--best-seller-accent);
+  background: var(--best-seller-bg);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.best-sellers-header h3 {
+  margin: 0;
+  color: var(--vw-blue);
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex: 1;
+}
+
+.best-seller-badge {
+  background: var(--best-seller-accent);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.best-sellers-subtitle {
+  color: var(--vw-gray-text);
+  font-size: 0.9rem;
+  margin: 0;
+  padding-left: 2.75rem; 
+}
+
+.best-seller-indicator {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(255, 107, 53, 0.95);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(4px);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+.show-all-container {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to bottom, transparent, var(--vw-gray-100));
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+
+.show-all-button {
+  background: var(--vw-white);
+  border: 2px solid var(--vw-blue-light);
+  color: var(--vw-blue);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-btn);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 320px;
+  justify-content: center;
+}
+
+.show-all-button:hover {
+  background: var(--vw-blue-light);
+  color: var(--vw-white);
+  transform: translateY(-2px);
+}
+
+.show-all-button:active {
+  transform: translateY(0);
+}
+
+.models-count {
+  background: var(--vw-blue);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.drawer-best-seller-tag {
+  background: var(--best-seller-accent);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.vw-models-grid {
+  transition: grid-template-rows 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .best-sellers-section {
+    padding: 1.25rem 1rem 0.5rem;
+  }
+  
+  .best-sellers-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .best-seller-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+  
+  .show-all-button {
+    font-size: 0.95rem;
+    padding: 0.875rem 1.25rem;
+  }
+  
+  .best-seller-indicator {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vw-models-grid.fade-in > * {
+  animation: slideDown 0.4s ease forwards;
+  animation-delay: calc(var(--item-index, 0) * 0.1s);
+}
+
+.vw-models-grid:has(~ .show-all-container) {
+  padding-bottom: 2rem;
+}
+
+.vw-selector-container {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--vw-gray-100);
+  min-height: 100vh;
+  padding-bottom: 80px; /* Espaço para scroll no mobile */
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --- Header --- */
+.vw-header {
+  background: var(--vw-white);
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.vw-header-content h2 {
+  color: var(--vw-blue);
+  font-weight: 800;
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+.vw-header-content p {
+  color: var(--vw-gray-text);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* --- Tabs --- */
+.vw-tabs-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+
+.vw-tabs {
+  background: var(--vw-gray-200);
+  padding: 4px;
+  border-radius: 30px;
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.vw-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-weight: 600;
+  color: var(--vw-gray-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.vw-tab.active {
+  background: var(--vw-white);
+  color: var(--vw-blue);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* --- Grid de Cards --- */
+.vw-models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  transition: opacity 0.3s ease;
+}
+
+.vw-models-grid.fade-out { opacity: 0; }
+.vw-models-grid.fade-in { opacity: 1; }
+
+/* --- Truck Card --- */
+.vw-truck-card {
+  background: var(--vw-white);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.vw-truck-card:active {
+  transform: scale(0.98);
+}
+
+.vw-truck-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--vw-blue-light);
+}
+
+.card-image-wrapper {
+  position: relative;
+  height: 180px;
+  background: #f0f2f5;
+  overflow: hidden;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.vw-truck-card:hover .card-image-wrapper img {
+  transform: scale(1.05);
+}
+
+.card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 30, 80, 0.9);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+}
+
+.card-content {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: var(--vw-blue);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.card-price {
+  display: block;
+  font-size: 1rem;
+  color: var(--vw-gray-text);
+  margin-top: 0.25rem;
+}
+
+.card-mini-specs {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+  color: var(--vw-gray-text);
+  font-size: 0.85rem;
+}
+
+.card-mini-specs span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-cta {
+  margin-top: auto;
+  background: transparent;
+  border: none;
+  color: var(--vw-blue-light);
+  font-weight: 600;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* --- Drawer (Painel Lateral/Inferior) --- */
+.vw-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 30, 80, 0.4);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end; /* Desktop: Lado direito */
+  align-items: flex-end;     /* Mobile: Fundo */
+}
+
+.vw-drawer {
+  background: white;
+  width: 100%;
+  max-width: 450px; /* Largura desktop */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.2);
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Drawer estilo Meteor (Diferenciação visual sutil) */
+.vw-drawer.meteor .model-tag {
+  background: var(--meteor-accent);
+}
+.vw-drawer.meteor .vw-btn-primary {
+  background: var(--meteor-accent);
+}
+.vw-drawer.meteor .drawer-hero-gradient {
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+.close-drawer-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.drawer-scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 2rem;
+}
+
+.drawer-hero {
+  position: relative;
+  height: 250px;
+}
+
+.drawer-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.drawer-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 30, 80, 0.9), transparent);
+}
+
+.drawer-hero-title {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  color: white;
+  right: 1.5rem;
+}
+
+.model-tag {
+  background: var(--vw-blue-light);
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.drawer-hero-title h2 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.drawer-price {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-top: 0.5rem;
+}
+
+/* Specs no Drawer */
+.drawer-main-specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--vw-gray-100);
+  margin-bottom: 1rem;
+}
+
+.spec-box {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spec-icon {
+  color: var(--vw-blue);
+  margin-bottom: 0.5rem;
+}
+
+.spec-box label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--vw-gray-text);
+  margin-bottom: 0.25rem;
+}
+
+.spec-box strong {
+  font-size: 0.9rem;
+  color: var(--vw-blue);
+}
+
+.drawer-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--vw-gray-200);
+}
+
+.drawer-section h4 {
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--vw-blue);
+  font-size: 1.1rem;
+}
+
+.specs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.specs-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--vw-gray-200);
+  font-size: 0.95rem;
+}
+
+.specs-list li:last-child {
+  border-bottom: none;
+}
+
+.specs-list .value {
+  font-weight: 600;
+  color: var(--vw-blue);
+  text-align: right;
+  max-width: 60%;
+}
+
+.features-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feature-pill {
+  background: #eef2ff;
+  color: var(--vw-blue);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.drawer-footer {
+  padding: 1.5rem;
+  background: white;
+  border-top: 1px solid var(--vw-gray-200);
+  position: sticky;
+  bottom: 0;
+}
+
+.vw-btn-primary {
+  width: 100%;
+  background: var(--vw-blue);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: var(--radius-btn);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.vw-btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* --- Mobile Breakpoint --- */
+@media (max-width: 768px) {
+  .vw-models-grid {
+    grid-template-columns: 1fr; /* Um card por linha no mobile */
+    gap: 1.5rem;
+  }
+  
+  /* Transformar Drawer em Bottom Sheet no mobile */
+  .vw-drawer {
+    height: 85vh; /* Não ocupa tela toda */
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .vw-drawer-overlay {
+    align-items: flex-end; /* Alinha no fundo */
+  }
+
+  .close-drawer-btn {
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0,0,0,0.3); /* Mais contraste no mobile */
+  }
+}
