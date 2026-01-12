@@ -15,17 +15,16 @@ import {
   Gauge,
   Weight,
   Image as ImageIcon,
-  Ruler
+  Ruler,
+  Loader2,
+  MessageCircle
 } from "lucide-react";
 import "./ConstellationConfigurator.css";
-import {
-  modelOptionsMap,
-  type ModelOptions
-} from "../data/truckConfigData";
-
 import type { TruckModel } from '../TruckModelSelector/TruckModelSelector';
 import Constellation360Viewer from "../Constellation3D/Constellation360Viewer";
 import ChassisLengthSection from "./ChassisLengthSection"; 
+import { generateProposalPDF, downloadPDF, safeDownloadPDF } from "../../services/pdfService";
+
 interface Props {
   selectedModel: TruckModel;
   onBack?: () => void;
@@ -40,69 +39,148 @@ interface Pintura {
 interface Pacote {
   codigo: string;
   nome: string;
+  icone: any;
   descricao: string[];
   beneficios: string[];
   selecionado: boolean;
   categoria: string;
   disponivel: boolean;
-  icone?: any;
 }
 
-export default function ConstellationConfigurator({ selectedModel }: Props) {
+interface UserData {
+  name: string;
+  phone: string;
+  acceptsMarketing: boolean;
+}
+
+const pacotesConstellation: Pacote[] = [
+  {
+    codigo: "ROB",
+    nome: "Pacote Robust",
+    icone: Shield,
+    categoria: "robustez",
+    descricao: [
+      "Para-choque curto colorido com ângulo de ataque agressivo",
+      "Interior com bancos em couro sintético",
+      "Ar-condicionado de série",
+      "Painel com funções básicas e prática operacional",
+      "Suspensão reforçada para cargas pesadas",
+      "Proteção extra do motor e transmissão"
+    ],
+    beneficios: [
+      "Maior resistência para aplicações urbanas e rodoviárias",
+      "Conforto básico e consistência operacional",
+      "Maior durabilidade do acabamento interno",
+      "Preparado para condições severas"
+    ],
+    selecionado: false,
+    disponivel: true
+  },
+  {
+    codigo: "HLI",
+    nome: "Pacote Highline",
+    icone: Zap,
+    categoria: "premium",
+    descricao: [
+      "Painel de instrumentos 100% digital (tela de 10 polegadas)",
+      "Central multimídia de 7 polegadas com espelhamento",
+      "Funções avançadas de conectividade",
+      "Mais comodidade e visibilidade para o motorista",
+      "Sistema de som premium",
+      "Navegação GPS integrada"
+    ],
+    beneficios: [
+      "Tecnologia avançada embarcada",
+      "Melhor experiência de uso no dia a dia",
+      "Conectividade com smartphone",
+      "Painel mais intuitivo com recursos adicionais",
+      "Entretenimento em viagens longas"
+    ],
+    selecionado: false,
+    disponivel: true
+  },
+  {
+    codigo: "PRI",
+    nome: "Pacote Prime",
+    icone: Settings,
+    categoria: "conforto",
+    descricao: [
+      "Volante multifuncional",
+      "Banco do motorista premium com ajustes (incluindo lombar)",
+      "Suporte para celular no console central",
+      "Entradas USB e USB-C",
+      "Iluminação ambiente personalizável",
+      "Controles de climatização avançados"
+    ],
+    beneficios: [
+      "Conforto superior para o condutor",
+      "Ergonomia aprimorada",
+      "Melhor organização de cabos e dispositivos",
+      "Tecnologia de conectividade embarcada",
+      "Ambiente mais agradável"
+    ],
+    selecionado: false,
+    disponivel: true
+  },
+  {
+    codigo: "OFF",
+    nome: "Pacote Off-Road",
+    icone: Truck,
+    categoria: "offroad",
+    descricao: [
+      "Componentes para operação fora de estrada",
+      "Para-choque reforçado e proteção extra",
+      "Banco do motorista com cinto integrado",
+      "Volante com funções adicionais para terreno difícil",
+      "Pneus especiais para terreno irregular",
+      "Sistema de tração auxiliar"
+    ],
+    beneficios: [
+      "Maior capacidade de operação em terreno irregular",
+      "Proteção adicional dos componentes externos",
+      "Maior segurança em operações off-road",
+      "Maior conforto em operações severas",
+      "Capacidade de superar obstáculos"
+    ],
+    selecionado: false,
+    disponivel: true
+  }
+];
+
+const opcionaisPintura: Pintura[] = [
+  { nome: "Bege Agata", colorCode: "#e9c793", categoria: "Standard" },
+  { nome: "Laranja", colorCode: "#ff5e00ff", categoria: "Metálica" },
+  { nome: "Azul Biscay", colorCode: "#0056b3", categoria: "Metálica" },
+  { nome: "Vermelho", colorCode: "#c0392b", categoria: "Metálica" },
+  { nome: "Amarelo Bem-te-vi", colorCode: "#FFDE21", categoria: "Metálica" },
+  { nome: "Cinza MoonStone", colorCode: "#565f6b", categoria: "Metálica" },
+  { nome: "Branco Geada", colorCode: "#ffffff", categoria: "Sólida" }
+];
+
+export default function ConstellationConfigurator({ selectedModel, onBack }: Props) {
+  
   const [currentStep, setCurrentStep] = useState<"chassis" | "cor" | "pacotes" | "resumo">("chassis");
   const [customColor, setCustomColor] = useState<string>('#0056b3');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [viewerMode, setViewerMode] = useState<"static" | "360">("360");
   const [chassisLength, setChassisLength] = useState<number>(5200);
-
-  const getModelOptions = (modelId: string): ModelOptions => {
-    return modelOptionsMap[modelId] || getDefaultModelOptions();
-  };
-
-  const getDefaultModelOptions = (): ModelOptions => ({
-    pintura: [
-      { nome: "Bege Agata", colorCode: "#e9c793", categoria: "Standard" },
-      { nome: "Laranja", colorCode: "#ff5e00ff", categoria: "Metálica" },
-      { nome: "Azul Biscay", colorCode: "#0056b3", categoria: "Metálica" },
-      { nome: "Vermelho", colorCode: "#c0392b", categoria: "Metálica" },
-      { nome: "Amarelo Bem-te-vi", colorCode: "#FFDE21", categoria: "Metálica" },
-      { nome: "Cinza MoonStone", colorCode: "#565f6b", categoria: "Metálica" }
-    ],
-    pacotes: []
-  });
-
-  const getDefaultPintura = (): Pintura => ({
-    nome: "Branco Polar",
-    colorCode: "#ffffff",
-    categoria: "Standard"
-  });
-
-  const modelOptions = getModelOptions(selectedModel.id);
-  const pacotesComIcones: Pacote[] = modelOptions.pacotes.map(pacote => ({
-    ...pacote,
-    icone: getCategoriaIcon(pacote.categoria)
-  }));
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const [config, setConfig] = useState<{
     pintura: Pintura;
     pacotes: Pacote[];
   }>({
-    pintura: modelOptions.pintura[0] || getDefaultPintura(),
-    pacotes: pacotesComIcones
+    pintura: opcionaisPintura[0],
+    pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
   });
 
   useEffect(() => {
-    const newModelOptions = getModelOptions(selectedModel.id);
-
     setConfig({
-      pintura: newModelOptions.pintura[0] || getDefaultPintura(),
-      pacotes: newModelOptions.pacotes.map(p => ({
-        ...p,
-        icone: getCategoriaIcon(p.categoria)
-      }))
+      pintura: opcionaisPintura[0],
+      pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
     });
     setCurrentStep("chassis");
-    setChassisLength(5200); 
+    setChassisLength(5200);
   }, [selectedModel]);
 
   const handleSelectPintura = (pintura: Pintura) => {
@@ -137,6 +215,10 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
         return Zap;
       case "urbano":
         return Settings;
+      case "robustez":
+        return Shield;
+      case "offroad":
+        return Truck;
       default:
         return Package;
     }
@@ -155,11 +237,130 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
     }
   };
 
+  const getUserData = () => {
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        return {
+          name: parsedData.name || '',
+          phone: parsedData.phone || ''
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao obter dados do usuário:', error);
+      return null;
+    }
+  };
+
+  const handleGenerateProposal = async () => {
+  const userData = getUserData();
+  
+  if (!userData || !userData.name || !userData.phone) {
+    alert('Dados do cliente não encontrados. Por favor, faça login novamente.');
+    if (onBack) onBack();
+    return;
+  }
+
+  setIsGeneratingPDF(true);
+
+  try {
+    const truckData = {
+      name: selectedModel.name,
+      variant: selectedModel.variant,
+      engine: selectedModel.engine,
+      power: selectedModel.power,
+      torque: selectedModel.torque,
+      weight: selectedModel.weight,
+      type: selectedModel.type,
+    };
+
+    const configuration = {
+      chassisLength,
+      paint: {
+        nome: config.pintura.nome,
+        colorCode: config.pintura.colorCode,
+      },
+      packages: config.pacotes
+        .filter(p => p.selecionado)
+        .map(p => ({
+          codigo: p.codigo,
+          nome: p.nome,
+          categoria: p.categoria,
+        })),
+    };
+
+    const pdfBlob = await generateProposalPDF(userData, truckData, configuration);
+    const fileName = `Proposta_${selectedModel.name}_${userData.name.replace(/\s+/g, '_')}.pdf`;
+    const downloadSuccess = await safeDownloadPDF(pdfBlob, fileName);
+    
+    if (!downloadSuccess) {
+      const url = URL.createObjectURL(pdfBlob);
+      alert(
+        '📄 PDF gerado!\n\n' +
+        'Para baixar manualmente:\n' +
+        '1. Clique no link abaixo\n' +
+        '2. Use "Salvar como" no menu do navegador\n\n' +
+        `Link: ${url.substring(0, 50)}...`
+      );
+      
+      window.open(url, '_blank');
+      
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    }
+
+    const message = `Olá ${userData.name}! 🌟
+
+Acabamos de gerar sua proposta para o *${selectedModel.name}* que você configurou!
+
+📋 *Resumo da configuração:*
+• Modelo: ${selectedModel.name}
+• Cor: ${config.pintura.nome}
+• Comprimento do chassi: ${(chassisLength / 1000).toFixed(1)}m
+• Pacotes selecionados: ${config.pacotes.filter(p => p.selecionado).length}
+
+📎 O PDF com todos os detalhes está disponível para download.
+
+Agradecemos sua preferência! 🚚
+
+*Equipe Icavel Caminhões & Ônibus*`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const cleanPhone = userData.phone.replace(/\D/g, '');
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+
+    setTimeout(() => {
+      window.open(whatsappUrl, '_blank');
+    }, 1000);
+
+  } catch (error) {
+    console.error('Erro ao gerar proposta:', error);
+    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      alert(
+        '⚠️ Dispositivo móvel detectado\n\n' +
+        'Para melhor experiência:\n' +
+        '1. Use o navegador Chrome\n' +
+        '2. Permita pop-ups e downloads\n' +
+        '3. Tente novamente\n\n' +
+        'Se o problema persistir, entre em contato com nosso suporte.'
+      );
+    } else {
+      alert('❌ Erro ao gerar proposta. Por favor, tente novamente.');
+    }
+  } finally {
+    setIsGeneratingPDF(false);
+  }
+};
+
   const ColorPickerModal = () => (
     <div className="color-picker-modal-overlay" onClick={() => setShowColorPicker(false)}>
       <div className="color-picker-modal" onClick={(e) => e.stopPropagation()}>
         <div className="color-picker-header">
-          <h3></h3>
+          <h3>Cor Personalizada</h3>
           <button onClick={() => setShowColorPicker(false)} className="close-btn">×</button>
         </div>
         <div className="color-picker-content">
@@ -271,7 +472,7 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
                 </span>
               </div>
               <div className="color-grid">
-                {modelOptions.pintura.map((p) => (
+                {opcionaisPintura.map((p) => (
                   <button
                     key={p.nome}
                     onClick={() => handleSelectPintura(p)}
@@ -295,11 +496,7 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
                 ))}
               </div>
               <div className="text-center mt-6">
-                <button
-                  onClick={() => setShowColorPicker(true)}
-                  className="text-constellation-blue hover:text-blue-700 font-medium flex items-center gap-2 mx-auto"
-                >
-                </button>
+              
               </div>
             </div>
           </div>
@@ -392,7 +589,7 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
                 Resumo da Configuração
               </h3>
               <p className="section-subtitle">
-                Configuração final do seu {selectedModel.name}.
+                Configuração final do seu {selectedModel.name}. Clique em "Gerar Proposta" para enviar por WhatsApp.
               </p>
             </div>
 
@@ -418,6 +615,29 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
                   <div className="summary-item">
                     <span>Comprimento do Chassi</span>
                     <strong>{(chassisLength / 1000).toFixed(1)}m</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="summary-box">
+                <div className="summary-box-header">
+                  <Palette size={16} />
+                  <span>Exterior</span>
+                </div>
+                <div className="summary-list">
+                  <div className="summary-item">
+                    <span>Acabamento</span>
+                    <strong>{config.pintura.categoria}</strong>
+                  </div>
+                  <div className="summary-item color-item">
+                    <span>Cor</span>
+                    <div className="color-inline">
+                      <div
+                        className="color-dot-sm"
+                        style={{ backgroundColor: config.pintura.colorCode }}
+                      />
+                      <strong>{config.pintura.nome}</strong>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -476,6 +696,38 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
                   disponibilidade, consulte a concessionária.
                 </p>
               </div>
+
+              <div className="proposal-actions">
+                <button
+                  onClick={handleGenerateProposal}
+                  disabled={isGeneratingPDF}
+                  className="btn-primary btn-generar-proposta"
+                  style={{
+                    backgroundColor: '#25D366',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    margin: '20px auto',
+                    minWidth: '300px'
+                  }}
+                >
+                  {isGeneratingPDF ? (
+                    <>
+                      <Loader2 className="spinner" size={20} />
+                      Gerando PDF...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle size={20} />
+                      <span>Gerar Proposta e Enviar WhatsApp</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -512,7 +764,7 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
           </header>
 
           <div className="vehicle-container">
-            <div className="vehicle-viewer-wrapper">
+            <div className="vehicle-viewer-wrapper" id="vehicle-viewer-wrapper">
               <Constellation360Viewer
                 color={config.pintura.nome}
                 model={selectedModel.id}
@@ -579,40 +831,58 @@ export default function ConstellationConfigurator({ selectedModel }: Props) {
 
           <div className="config-footer">
             <div className="action-buttons action-buttons-sm">
-              <button
-                onClick={() => {
-                  const nextSteps: Record<string, string> = {
-                    chassis: "cor",
-                    cor: "pacotes",
-                    pacotes: "resumo",
-                    resumo: "chassis"
-                  };
-
-                  if (currentStep === 'resumo') {
-                    alert(`🚀 Proposta para ${selectedModel.name} gerada com sucesso!\n\nComprimento do chassi: ${(chassisLength / 1000).toFixed(1)}m\nUm consultor entrará em contato em até 24 horas.`);
-                  } else {
+              {currentStep === 'resumo' ? (
+                <button
+                  onClick={handleGenerateProposal}
+                  disabled={isGeneratingPDF}
+                  className="btn-primary btn-sm btn-generar-proposta"
+                  style={{ 
+                    backgroundColor: '#25D366',
+                    minWidth: '200px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isGeneratingPDF ? (
+                    <>
+                      <Loader2 className="spinner" size={16} />
+                      Gerando...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle size={16} />
+                      Gerar Proposta
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    const nextSteps: Record<string, string> = {
+                      chassis: "cor",
+                      cor: "pacotes",
+                      pacotes: "resumo",
+                      resumo: "chassis"
+                    };
                     setCurrentStep(nextSteps[currentStep] as any);
-                  }
-                }}
-                className="btn-primary btn-sm"
-              >
-                {currentStep === 'resumo' ? 'Finalizar Proposta' : 'Continuar'}
-                <ChevronRight size={16} className="btn-icon" />
-              </button>
+                  }}
+                  className="btn-primary btn-sm"
+                >
+                  {currentStep === 'pacotes' ? 'Ver Resumo' : 'Continuar'}
+                  <ChevronRight size={16} className="btn-icon" />
+                </button>
+              )}
 
               <button className="btn-secondary btn-sm">
                 <Share2 size={14} className="btn-icon" /> Compartilhar
               </button>
               <button
                 onClick={() => {
-                  const newModelOptions = getModelOptions(selectedModel.id);
-
                   setConfig({
-                    pintura: newModelOptions.pintura[0] || getDefaultPintura(),
-                    pacotes: newModelOptions.pacotes.map(p => ({
-                      ...p,
-                      icone: getCategoriaIcon(p.categoria)
-                    }))
+                    pintura: opcionaisPintura[0],
+                    pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
                   });
                   setCurrentStep("chassis");
                   setChassisLength(5200);

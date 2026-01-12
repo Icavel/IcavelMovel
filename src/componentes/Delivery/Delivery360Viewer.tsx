@@ -1,4 +1,4 @@
-// Delivery360Viewer.tsx - versão corrigida
+// Delivery360Viewer.tsx 
 import React, { useState, useRef, useEffect } from "react";
 import "./Delivery360Viewer.css";
 

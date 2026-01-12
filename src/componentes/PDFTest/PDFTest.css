@@ -1,0 +1,119 @@
+/* src/components/PDFTest/PDFTest.css */
+.pdf-test-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pdf-test-container h2 {
+  color: #0056b3;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.test-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #0056b3;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #004494;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #0056b3;
+  border: 2px solid #0056b3;
+}
+
+.btn-secondary:hover {
+  background: #f0f7ff;
+}
+
+.test-results {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  border-left: 4px solid #28a745;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.test-results pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.test-info h3 {
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.test-data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.test-data-card {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.test-data-card h4 {
+  color: #0056b3;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.test-data-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.test-data-card strong {
+  color: #495057;
+  margin-right: 8px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

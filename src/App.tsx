@@ -142,6 +142,7 @@ const EventsPage = () => {
     </div>
   );
 };
+
 const ConsultantsPage = () => {
   const navigate = useNavigate();
   
@@ -383,6 +384,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

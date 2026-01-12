@@ -10,7 +10,6 @@ interface LoginScreenProps {
 interface UserData {
   name: string;
   phone: string;
-  email: string;
   acceptsMarketing: boolean;
 }
 
@@ -18,7 +17,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState<UserData>({
     name: '',
     phone: '',
-    email: '',
     acceptsMarketing: false
   });
   const [errors, setErrors] = useState<Partial<Record<keyof UserData, string>>>({});
@@ -34,12 +32,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       newErrors.phone = 'Telefone é obrigatório';
     } else if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(formData.phone)) {
       newErrors.phone = 'Telefone inválido (use: (11) 99999-9999)';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'E-mail é obrigatório';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'E-mail inválido';
     }
 
     if (!formData.acceptsMarketing) {
@@ -155,14 +147,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               <Mail size={20} />
               <span>E-mail*</span>
             </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange('email')}
-              placeholder="seu@email.com"
-              className={`form-input ${errors.email ? 'error' : ''}`}
-            />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            
+
           </div>
 
           <div className="checkbox-group">

@@ -10,7 +10,7 @@ interface Constellation360ViewerProps {
 
 const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
   scale = 1.3,
-  color = "Branco Polar",
+  color = "Branco Geada",
 }) => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -73,6 +73,18 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0oUyuHgkrn5e3P96qY4K7bOAatLUuDXzGRFc0"
     ],
 
+    "Branco Geada": [
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0C4FNpumzV9IYuXMtKSm4brNO7Zyd6ojwcLRv",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0alwfB2D92Ef5jZGDo3qKrlIzbBVkWYh7mnUJ",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr06EvFUYySarjJxgwdi6tRWoLNCunz7hEPy5XZ",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0nJxf40ZqjhFbPT5JVCkQ1myXAniRBrY3a2xc",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0XLx62oIdt6TLARKvkc09qBDo1z5XGJlihp8Q",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr05iTsQVAogYsJSVxeRWa64uM89yBcTbjmdDhr",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr03ElVyMNcujJtS6L1nNTlORwF5girxpQAhDe4",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ql9nnXKKEuBMIyJ7TZsox1eXWNOAg3GQawS5"
+      
+    ],
+
     "Cinza MoonStone": [
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0hWD8LreXeVMRwOltd6mGH1Q9oEKAj4bJPYnc",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0TN37PQwQq8tcohsp3zfJbrmlFSZ0LIYnyGBg",
@@ -91,7 +103,7 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
       return IMAGES_BY_COLOR[color];
     }
     
-    return IMAGES_BY_COLOR["Branco Polar"];
+    return IMAGES_BY_COLOR["Branco Geada"];
   };
 
   const IMAGE_SEQUENCE = getImageSequence();

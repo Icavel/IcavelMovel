@@ -429,7 +429,7 @@ const meteorModels: TruckModel[] = [
     specs: [
       { label: 'Motor', value: 'MAN D3876LF42' },
       { label: 'Transmissão', value: 'V-Tronic' },
-      { label: 'PBTC', value: '100.000 kg' }
+      { label: 'PBTC', value: '74.000 kg' }
     ],
     features: ['Cabine Presidential', 'Duas Camas', 'Escritório', 'Wi-Fi'],
     transmission: 'Automatizada 16 vel.',
