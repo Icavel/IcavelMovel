@@ -200,12 +200,11 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--vw-gray-100);
   min-height: 100vh;
-  padding-bottom: 80px; /* Espaço para scroll no mobile */
+  padding-bottom: 80px; 
   position: relative;
   overflow-x: hidden;
 }
 
-/* --- Header --- */
 .vw-header {
   background: var(--vw-white);
   padding: 1.5rem 1.5rem 0 1.5rem;
@@ -230,7 +229,6 @@
   margin-bottom: 1rem;
 }
 
-/* --- Tabs --- */
 .vw-tabs-wrapper {
   display: flex;
   justify-content: center;
@@ -266,7 +264,6 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* --- Grid de Cards --- */
 .vw-models-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -280,7 +277,6 @@
 .vw-models-grid.fade-out { opacity: 0; }
 .vw-models-grid.fade-in { opacity: 1; }
 
-/* --- Truck Card --- */
 .vw-truck-card {
   background: var(--vw-white);
   border-radius: var(--radius-card);
@@ -384,7 +380,6 @@
   cursor: pointer;
 }
 
-/* --- Drawer (Painel Lateral/Inferior) --- */
 .vw-drawer-overlay {
   position: fixed;
   inset: 0;
@@ -392,14 +387,14 @@
   backdrop-filter: blur(3px);
   z-index: 50;
   display: flex;
-  justify-content: flex-end; /* Desktop: Lado direito */
-  align-items: flex-end;     /* Mobile: Fundo */
+  justify-content: flex-end; 
+  align-items: flex-end;     
 }
 
 .vw-drawer {
   background: white;
   width: 100%;
-  max-width: 450px; /* Largura desktop */
+  max-width: 450px; 
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -413,7 +408,6 @@
   to { transform: translateX(0); }
 }
 
-/* Drawer estilo Meteor (Diferenciação visual sutil) */
 .vw-drawer.meteor .model-tag {
   background: var(--meteor-accent);
 }
@@ -496,7 +490,6 @@
   margin-top: 0.5rem;
 }
 
-/* Specs no Drawer */
 .drawer-main-specs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -584,6 +577,60 @@
   font-weight: 500;
 }
 
+.back-to-home-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.back-to-home-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 2px solid #e0e0e0;
+  color: #0066cc;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.back-to-home-button:hover {
+  background-color: rgba(0, 102, 204, 0.1);
+  border-color: #0066cc;
+  transform: translateX(-5px);
+}
+
+.vw-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vw-header-content {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .back-to-home-container {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+  }
+  
+  .back-to-home-button {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
 .drawer-footer {
   padding: 1.5rem;
   background: white;
@@ -613,16 +660,14 @@
   transform: scale(0.97);
 }
 
-/* --- Mobile Breakpoint --- */
 @media (max-width: 768px) {
   .vw-models-grid {
-    grid-template-columns: 1fr; /* Um card por linha no mobile */
+    grid-template-columns: 1fr; 
     gap: 1.5rem;
   }
   
-  /* Transformar Drawer em Bottom Sheet no mobile */
   .vw-drawer {
-    height: 85vh; /* Não ocupa tela toda */
+    height: 85vh;
     width: 100%;
     max-width: 100%;
     border-radius: 20px 20px 0 0;
@@ -635,12 +680,12 @@
   }
   
   .vw-drawer-overlay {
-    align-items: flex-end; /* Alinha no fundo */
+    align-items: flex-end; 
   }
 
   .close-drawer-btn {
     top: 1rem;
     right: 1rem;
-    background: rgba(0,0,0,0.3); /* Mais contraste no mobile */
+    background: rgba(255, 0, 0, 0.3); 
   }
 }

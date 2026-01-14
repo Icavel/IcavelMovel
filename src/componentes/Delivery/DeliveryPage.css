@@ -187,7 +187,6 @@
   background: rgba(0, 86, 179, 0.35);
 }
 
-/* Estilos compartilhados com Meteor (copiados do Meteor) */
 .step-container {
   animation: fadeIn 0.4s ease-out forwards;
 }
@@ -319,7 +318,6 @@
   margin-bottom: 0.25rem;
 }
 
-/* Summary Styles */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -442,7 +440,6 @@
   color: #1565c0;
 }
 
-/* Pacotes Styles */
 .pacotes-grid {
   display: flex;
   flex-direction: column;
@@ -624,7 +621,6 @@
   white-space: nowrap;
 }
 
-/* Config Footer */
 .config-footer {
   padding: 1.5rem 2rem;
   background: white;
@@ -746,7 +742,6 @@
   }
 }
 
-/* Responsive Styles */
 @media (max-width: 1200px) {
   .viewer-container {
     flex: 0 0 55%;

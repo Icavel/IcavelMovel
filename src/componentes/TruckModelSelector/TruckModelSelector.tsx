@@ -11,8 +11,10 @@ import {
   CheckCircle2,
   ArrowRight,
   TrendingUp,
-  ChevronDown
+  ChevronDown,
+  ChevronLeft 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; 
 import './TruckModelSelector.css';
 
 export interface TruckSpec {
@@ -577,6 +579,7 @@ interface TruckModelSelectorProps {
 }
 
 export default function TruckModelSelector({ onConfigure }: TruckModelSelectorProps) {
+  const navigate = useNavigate(); 
   const [activeTab, setActiveTab] = useState<TruckType>('constellation');
   const [selectedModel, setSelectedModel] = useState<TruckModel | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -617,6 +620,16 @@ export default function TruckModelSelector({ onConfigure }: TruckModelSelectorPr
         <div className="vw-header-content">
           <h2>Escolha seu Volkswagen</h2>
           <p>Potência e tecnologia para o seu negócio.</p>
+        </div>
+        
+        <div className="back-to-home-container">
+          <button 
+            className="back-to-home-button" 
+            onClick={() => navigate('/')}
+          >
+            <ChevronLeft size={20} />
+            Voltar para o início
+          </button>
         </div>
         
         <div className="vw-tabs-wrapper">

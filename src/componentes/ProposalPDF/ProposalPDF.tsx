@@ -104,19 +104,19 @@ const styles = StyleSheet.create({
   infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1, // ✅ ESSENCIAL: cada coluna ocupa metade da linha
+    flex: 1, 
   },
   infoLabel: {
     fontSize: 10,
     color: '#666666',
     fontWeight: 'bold',
-    width: 90, // ✅ Menor e seguro para duas colunas
+    width: 90,
   },
   infoValue: {
     fontSize: 10,
     color: '#333333',
     flex: 1,
-    lineHeight: 1.4, // ✅ MUITO IMPORTANTE no PDF
+    lineHeight: 1.4, 
   },
   vehicleGrid: {
     flexDirection: 'row',
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#333333',
     fontWeight: 'bold',
-    lineHeight: 1.4, // ✅ Consistência com outros textos
+    lineHeight: 1.4, 
   },
   packagesSection: {
     marginBottom: 20,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     marginRight: 8,
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   packageCategory: {
     fontSize: 9,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 3,
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   colorDisplay: {
     flexDirection: 'row',
@@ -218,12 +218,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
     color: '#333',
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   colorCode: {
     fontSize: 9,
     color: '#666',
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   disclaimer: {
     marginTop: 30,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   disclaimerText: {
     fontSize: 9,
     color: '#0056b3',
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   footer: {
     position: 'absolute',
@@ -255,12 +255,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 8,
     color: '#999999',
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
   pageNumber: {
     fontSize: 8,
     color: '#999999',
-    lineHeight: 1.4, // ✅
+    lineHeight: 1.4, 
   },
 });
 
@@ -313,7 +313,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Cabeçalho */}
         <View style={styles.header}>
           <View style={styles.logoSection}>
             <View style={styles.logo}>
@@ -332,34 +331,27 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </View>
         </View>
 
-        {/* Informações do Cliente - LAYOUT CORRIGIDO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>INFORMACOES DO CLIENTE</Text>
           <View style={styles.clientInfoGrid}>
-            {/* Primeira linha: Nome e Telefone lado a lado */}
             <View style={styles.infoRow}>
-              {/* Coluna 1: Nome */}
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Nome:</Text>
                 <Text style={styles.infoValue}>{userData.name || 'Nao informado'}</Text>
               </View>
-              
-              {/* Coluna 2: Telefone */}
+   
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Telefone:</Text>
                 <Text style={styles.infoValue}>{userData.phone || 'Nao informado'}</Text>
               </View>
             </View>
             
-            {/* Segunda linha: Data da Proposta e Validade lado a lado */}
             <View style={styles.infoRow}>
-              {/* Coluna 1: Data da Proposta */}
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Data da Proposta:</Text>
                 <Text style={styles.infoValue}>{currentDate}</Text>
               </View>
               
-              {/* Coluna 2: Validade */}
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Validade:</Text>
                 <Text style={styles.infoValue}>{expiryDate}</Text>
@@ -368,7 +360,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </View>
         </View>
 
-        {/* Veículo Configurado */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VEICULO CONFIGURADO</Text>
           <View style={styles.vehicleGrid}>
@@ -429,7 +420,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </View>
         </View>
 
-        {/* Personalização */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>PERSONALIZACAO</Text>
           <View style={styles.colorDisplay}>
@@ -446,7 +436,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </View>
         </View>
 
-        {/* Pacotes Opcionais */}
         {configuration.packages.length > 0 && (
           <View style={styles.packagesSection}>
             <Text style={styles.sectionTitle}>PACOTES OPCIONAIS</Text>
@@ -460,7 +449,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </View>
         )}
 
-        {/* Disclaimer */}
         <View style={styles.disclaimer}>
           <Text style={styles.disclaimerText}>
             ATENCAO: Esta proposta tem validade de 30 dias a partir da data de emissao. 
@@ -470,7 +458,6 @@ const ProposalPDF: React.FC<ProposalPDFProps> = ({
           </Text>
         </View>
 
-        {/* Rodapé */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Icavel Caminhoes & Onibus • CNPJ: 00.000.000/0000-00

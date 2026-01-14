@@ -1,7 +1,6 @@
 // src/typeAdapter.ts
 import { TruckModel as CentralTruckModel } from './types';
 
-// Adapta o formato do TruckModelSelector para o formato central
 export const adaptToCentralModel = (selectorModel: any): CentralTruckModel => {
   return {
     id: String(selectorModel.id),
@@ -23,7 +22,6 @@ export const adaptToCentralModel = (selectorModel: any): CentralTruckModel => {
   };
 };
 
-// Adapta do formato central para o TruckModelSelector
 export const adaptToSelectorModel = (centralModel: CentralTruckModel): any => {
   return {
     ...centralModel,

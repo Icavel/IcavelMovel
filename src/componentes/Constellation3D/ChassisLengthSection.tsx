@@ -86,7 +86,6 @@ export default function ChassisLengthSection({
   const chassisWidth = getChassisWidth();
   const axleCount = getAxleCount();
 
-  // SVG Components
   const CabinSVG = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" style={{ width: '100%', height: '100%' }}>
       <defs>

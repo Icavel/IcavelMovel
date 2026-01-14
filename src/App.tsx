@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
-import { Page, TruckModel } from './types'; 
+import { Page, TruckModel } from './types';
 import TruckModelSelector from './componentes/TruckModelSelector/TruckModelSelector';
 import MeteorConfigurator from './componentes/Meteor/MeteorConfigurator';
 import ConstellationConfigurator from './componentes/Constellation3D/ConstellationConfigurator';
@@ -12,7 +12,7 @@ import RecommendationPage from './RecommendationPage';
 import LoginScreen from './LoginScreen';
 
 const mockTruckData: TruckModel = {
-  id: 'constellation-1', 
+  id: 'constellation-1',
   name: 'Constellation 24.280',
   type: 'constellation',
   variant: '24.280 6x2',
@@ -107,11 +107,11 @@ const deliveryData: TruckModel = {
 
 const EventsPage = () => {
   const navigate = useNavigate();
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       <div className="max-w-6xl mx-auto">
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="flex items-center gap-2 text-blue-600 mb-8 hover:text-blue-800"
         >
@@ -120,9 +120,9 @@ const EventsPage = () => {
           </svg>
           Voltar
         </button>
-        
+
         <h1 className="text-4xl font-bold mb-6 text-gray-900">Eventos e Feiras Volkswagen</h1>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
             <div className="text-sm text-blue-600 font-semibold mb-2">PRÓXIMO EVENTO</div>
@@ -130,7 +130,7 @@ const EventsPage = () => {
             <p className="text-gray-600 mb-4">15-18 de Novembro, 2024</p>
             <p className="text-gray-700">Conheça nossa linha completa de caminhões e soluções de transporte.</p>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
             <div className="text-sm text-blue-600 font-semibold mb-2">LANÇAMENTO</div>
             <h3 className="text-xl font-bold mb-2">Nova Linha 2025</h3>
@@ -145,55 +145,103 @@ const EventsPage = () => {
 
 const ConsultantsPage = () => {
   const navigate = useNavigate();
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
-      <div className="max-w-6xl mx-auto">
-        <button 
+    <div className="consultants-container">
+      <div className="consultants-content">
+        <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-blue-600 mb-8 hover:text-blue-800"
+          className="back-button"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
           </svg>
-          Voltar
+          Voltar para Home
         </button>
-        
-        <h1 className="text-4xl font-bold mb-6 text-gray-900">Fale com um Consultor Volkswagen</h1>
-        
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Atendimento Personalizado</h2>
-          <p className="text-gray-700 mb-6">
-            Nossos consultores especializados estão prontos para entender suas necessidades 
+
+        <div className="consultants-header">
+          <h1>Fale com um Consultor Icavel</h1>
+          <p>Especialistas prontos para encontrar a solução ideal para o seu negócio</p>
+        </div>
+
+        <div className="consultants-card">
+          <h2>Atendimento Personalizado</h2>
+          <p className="subtitle">
+            Nossos consultores especializados estão prontos para entender suas necessidades
             e indicar a melhor solução Volkswagen para o seu negócio.
           </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600 mb-2">📞</div>
-              <h3 className="font-bold mb-2">Telefone</h3>
-              <p className="text-gray-600">0800 123 4567</p>
-              <p className="text-sm text-gray-500">Segunda a Sexta, 8h às 18h</p>
+
+          <div className="contact-methods-grid">
+            <div className="contact-method">
+              <div className="icon">📞</div>
+              <h3>Telefone</h3>
+              <p className="contact-info">0800 019 3333</p>
+              <p className="contact-details">Segunda a Sexta, 8h às 18h</p>
             </div>
-            
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600 mb-2">✉️</div>
-              <h3 className="font-bold mb-2">Email</h3>
-              <p className="text-gray-600">consultoria@volkswagen.com.br</p>
-              <p className="text-sm text-gray-500">Resposta em até 24h</p>
+
+            <div className="contact-method">
+              <div className="icon">✉️</div>
+              <h3>Email</h3>
+              <p className="contact-info">recepcao@icavel.com</p>
+              <p className="contact-details">Resposta em até 24 horas</p>
             </div>
-            
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600 mb-2">📍</div>
-              <h3 className="font-bold mb-2">WhatsApp</h3>
-              <p className="text-gray-600">(11) 98765-4321</p>
-              <p className="text-sm text-gray-500">Atendimento ágil</p>
+
+            <div className="contact-method whatsapp">
+              <div className="icon">💬</div>
+              <h3>WhatsApp</h3>
+              <p className="contact-info"> 0800 019 3333</p>
+              <p className="contact-details">Atendimento rápido e ágil</p>
             </div>
           </div>
-          
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium w-full md:w-auto">
-            Solicitar Contato de Consultor
-          </button>
+
+          <div className="qrcode-container">
+            <h3 className="qrcode-title">Escaneie o QR Code para WhatsApp</h3>
+            <p className="qrcode-subtitle">
+              Converse diretamente com nossos consultores pelo WhatsApp
+            </p>
+
+            <div className="qrcode-image-wrapper">
+              <img
+                src="https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0y1hUNpDSwAKxFhk9eiYJvqRu1LOf3TZtnjdI"
+                alt="QR Code para WhatsApp Icavel"
+                className="qrcode-image"
+              />
+            </div>
+
+            <div className="qrcode-instructions">
+              <div className="instruction-item">
+                <div className="instruction-icon">📱</div>
+                <p>Abra a câmera do seu celular</p>
+              </div>
+              <div className="instruction-item">
+                <div className="instruction-icon">🎯</div>
+                <p>Aponte para o QR Code acima</p>
+              </div>
+              <div className="instruction-item">
+                <div className="instruction-icon">💬</div>
+                <p>Toque no link para iniciar a conversa</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div>
+
+        </div>
+        <div >
+
+        </div>
+        <div>
+
+        </div>
+
+        <div>
+
+
+        </div>
+
+        <div>
+
         </div>
       </div>
     </div>
@@ -202,7 +250,7 @@ const ConsultantsPage = () => {
 
 function NotFound() {
   const navigate = useNavigate();
-  
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Página não encontrada</h1>
@@ -221,11 +269,11 @@ function NotFound() {
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const userData = localStorage.getItem('userData');
-  
+
   if (!userData) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -244,13 +292,13 @@ function App() {
     const convertedModel: TruckModel = {
       ...model,
       id: String(model.id),
-      specs: typeof model.specs === 'object' && !Array.isArray(model.specs) 
-        ? model.specs 
+      specs: typeof model.specs === 'object' && !Array.isArray(model.specs)
+        ? model.specs
         : undefined
     };
-    
+
     setSelectedTruck(convertedModel);
-    
+
     if (convertedModel.type === 'meteor') {
       window.location.href = '/meteor';
     } else if (convertedModel.type === 'constellation') {
@@ -273,118 +321,118 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               isAuthenticated ? (
                 <Navigate to="/" replace />
               ) : (
                 <LoginScreen onLoginSuccess={handleLoginSuccess} />
               )
-            } 
+            }
           />
-          
-          <Route 
-            path="/" 
+
+          <Route
+            path="/"
             element={
               isAuthenticated ? (
                 <LandingSalesEvents onNavigate={handleNavigate as (page: Page) => void} />
               ) : (
                 <Navigate to="/login" replace />
               )
-            } 
+            }
           />
-          
-          <Route 
-            path="/recommendation" 
+
+          <Route
+            path="/recommendation"
             element={
               <ProtectedRoute>
                 <RecommendationPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/truck-selector" 
+
+          <Route
+            path="/truck-selector"
             element={
               <ProtectedRoute>
                 <TruckModelSelector onConfigure={handleTruckConfigure} />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/events" 
+
+          <Route
+            path="/events"
             element={
               <ProtectedRoute>
                 <EventsPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/consultants" 
+
+          <Route
+            path="/consultants"
             element={
               <ProtectedRoute>
                 <ConsultantsPage />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/meteor" 
+
+          <Route
+            path="/meteor"
             element={
               <ProtectedRoute>
-                <MeteorConfigurator 
-                  selectedModel={(selectedTruck || meteorData) as any} 
-                  onBack={() => window.history.back()} 
+                <MeteorConfigurator
+                  selectedModel={(selectedTruck || meteorData) as any}
+                  onBack={() => window.history.back()}
                 />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/constellation" 
+
+          <Route
+            path="/constellation"
             element={
               <ProtectedRoute>
-                <ConstellationConfigurator 
-                  selectedModel={(selectedTruck || mockTruckData) as any} 
-                  onBack={() => window.history.back()} 
+                <ConstellationConfigurator
+                  selectedModel={(selectedTruck || mockTruckData) as any}
+                  onBack={() => window.history.back()}
                 />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/delivery" 
+
+          <Route
+            path="/delivery"
             element={
               <ProtectedRoute>
-                <DeliveryConfigurator 
-                  selectedModel={(selectedTruck || deliveryData) as any} 
-                  onBack={() => window.history.back()} 
+                <DeliveryConfigurator
+                  selectedModel={(selectedTruck || deliveryData) as any}
+                  onBack={() => window.history.back()}
                 />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/discover" 
+
+          <Route
+            path="/discover"
             element={
               <ProtectedRoute>
                 <Navigate to="/recommendation" replace />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/customize" 
+
+          <Route
+            path="/customize"
             element={
               <ProtectedRoute>
                 <Navigate to="/truck-selector" replace />
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

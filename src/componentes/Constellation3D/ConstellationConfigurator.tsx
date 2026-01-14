@@ -435,13 +435,6 @@ Agradecemos sua preferência! 🚚
         return (
           <div className="step-container">
             <div className="section-header">
-              <h3 className="section-title">
-                <Ruler size={20} className="section-icon" />
-                Configuração do Chassi
-              </h3>
-              <p className="section-subtitle">
-                Defina as dimensões do chassi para o seu {selectedModel.name}.
-              </p>
             </div>
 
             <div className="step-content">
