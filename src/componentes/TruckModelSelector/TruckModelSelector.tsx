@@ -22,6 +22,12 @@ export interface TruckSpec {
   value: string;
 }
 
+export interface ChassisConfig {
+  lengths: number[];
+  labels: string[];
+  images: string[];
+}
+
 export interface TruckModel {
   id: string;
   name: string;
@@ -35,14 +41,15 @@ export interface TruckModel {
   torque: string;
   weight: string;
   imageUrl: string;
+  chassisConfig?: ChassisConfig;
   isBestSeller?: boolean;
   salesRank?: number;
 }
 
 export type TruckType = 'constellation' | 'meteor' | 'delivery';
-const constellationModels: TruckModel[] = [
 
-{
+const constellationModels: TruckModel[] = [
+  {
     id: 'constellation-14-210-4x2',
     name: 'Constellation 14.210',
     type: 'constellation',
@@ -59,11 +66,18 @@ const constellationModels: TruckModel[] = [
     torque: '750 Nm',
     weight: '14.500 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0IqzjTM52vLeKVUf0JkMdWSb6n8psEYyOBH7R',
+    chassisConfig: {
+      lengths: [4800, 5207],
+      labels: ["4,8m", "5,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-14-210-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-14-210-5207'
+      ]
+    },
     isBestSeller: true,
     salesRank: 1
   },
-
- {
+  {
     id: 'constellation-17-210-4x2-2',
     name: 'Constellation 17.210',
     type: 'constellation',
@@ -80,11 +94,18 @@ const constellationModels: TruckModel[] = [
     torque: '750 Nm',
     weight: '16.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr097GilQOveFS8kwitsCaZn02EN6hB7IAdWGbY',
+    chassisConfig: {
+      lengths: [4800, 5207],
+      labels: ["4,8m", "5,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-17-210-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-17-210-5207'
+      ]
+    },
     isBestSeller: true,
     salesRank: 2
   },
-
-{
+  {
     id: 'constellation-18-210-4x2',
     name: 'Constellation 18.210',
     type: 'constellation',
@@ -101,12 +122,20 @@ const constellationModels: TruckModel[] = [
     torque: '750 Nm',
     weight: '16.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ZmrmLOPmOr0ft81hy9vdqW5DlbXnFYAw2K3N',
+    chassisConfig: {
+      lengths: [3560, 4800, 5207],
+      labels: ["3,56m", "4,8m", "5,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-210-3560',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-210-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-210-5207'
+      ]
+    },
     isBestSeller: true,
     salesRank: 3
   },
-
-{
-    id: 'constellation-18-260',
+  {
+    id: 'constellation-18-260-4x2',
     name: 'Constellation 18.260',
     type: 'constellation',
     variant: '4x2',
@@ -122,12 +151,19 @@ const constellationModels: TruckModel[] = [
     torque: '950 Nm',
     weight: '16.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0IqzjTM52vLeKVUf0JkMdWSb6n8psEYyOBH7R',
+    chassisConfig: {
+      lengths: [3560, 5207],
+      labels: ["3,56m", "5,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-260-3560',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-260-5207'
+      ]
+    },
     isBestSeller: true,
     salesRank: 4
   },
-
-   {
-    id: 'constellation-18-320-4x4',
+  {
+    id: 'constellation-18-320-4x2',
     name: 'Constellation 18.320',
     type: 'constellation',
     variant: '4x2',
@@ -143,12 +179,20 @@ const constellationModels: TruckModel[] = [
     torque: '1.200 Nm',
     weight: '16.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr09772zXyveFS8kwitsCaZn02EN6hB7IAdWGbY',
+    chassisConfig: {
+      lengths: [4340, 4800, 5207],
+      labels: ["4,34m", "4,8m", "5,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-320-4340',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-320-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-18-320-5207'
+      ]
+    },
     isBestSeller: true,
     salesRank: 5
   },
-
- {
-    id: 'constellation-26-260-4x2',
+  {
+    id: 'constellation-26-260-6x2',
     name: 'Constellation 26.260',
     type: 'constellation',
     variant: '6x2',
@@ -163,9 +207,17 @@ const constellationModels: TruckModel[] = [
     power: '260 cv',
     torque: '950 Nm',
     weight: '23.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0y1EJebDSwAKxFhk9eiYJvqRu1LOf3TZtnjdI'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0y1EJebDSwAKxFhk9eiYJvqRu1LOf3TZtnjdI',
+    chassisConfig: {
+      lengths: [4784, 6024, 6431],
+      labels: ["4,78m", "6,02m", "6,43m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-26-260-4784',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-26-260-6024',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-26-260-6431'
+      ]
+    }
   },
-
   {
     id: 'constellation-26-320-6x2',
     name: 'Constellation 26.320',
@@ -183,8 +235,15 @@ const constellationModels: TruckModel[] = [
     torque: '1.200 Nm',
     weight: '23.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr00L1oQmRbO8krQC41Wm7UyuKdScnNgI2FRzqx',
+    chassisConfig: {
+      lengths: [6024, 6431],
+      labels: ["6,02m", "6,43m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-26-320-6024',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-26-320-6431'
+      ]
+    }
   },
-
   {
     id: 'constellation-30-320-8x2',
     name: 'Constellation 30.320',
@@ -201,15 +260,21 @@ const constellationModels: TruckModel[] = [
     power: '315 cv',
     torque: '1.200 Nm',
     weight: '19.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0FDw8P3i1Nu85fCjEqUGF4ShW0BLK2Q9oetJw'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0FDw8P3i1Nu85fCjEqUGF4ShW0BLK2Q9oetJw',
+    chassisConfig: {
+      lengths: [7324, 7724],
+      labels: ["7,32m", "7,72m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-30-320-7324',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-30-320-7724'
+      ]
+    }
   },
-
-{
+  {
     id: 'constellation-27-260-6x4',
     name: 'Constellation 27.260',
     type: 'constellation',
     variant: '6x4',
- 
     specs: [
       { label: 'Motor', value: 'MAN / D0836LF18' },
       { label: 'Transmissão', value: 'ZF/95 1310 TD' },
@@ -221,15 +286,21 @@ const constellationModels: TruckModel[] = [
     power: '260 cv',
     torque: '950 Nm',
     weight: '23.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr05ebHifAogYsJSVxeRWa64uM89yBcTbjmdDhr'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr05ebHifAogYsJSVxeRWa64uM89yBcTbjmdDhr',
+    chassisConfig: {
+      lengths: [4800, 5940],
+      labels: ["4,8m", "5,94m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-27-260-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-27-260-5940'
+      ]
+    }
   },
-
-{
+  {
     id: 'constellation-27-320-6x4',
     name: 'Constellation 27.320',
     type: 'constellation',
     variant: '6x4',
-  
     specs: [
       { label: 'Motor', value: 'MAN / D0836LF17' },
       { label: 'Transmissão', value: 'ZF / 9S 1310 TD' },
@@ -241,9 +312,16 @@ const constellationModels: TruckModel[] = [
     power: '315 cv',
     torque: '1.200 Nm',
     weight: '36.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr06CLoYrySarjJxgwdi6tRWoLNCunz7hEPy5XZ'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr06CLoYrySarjJxgwdi6tRWoLNCunz7hEPy5XZ',
+    chassisConfig: {
+      lengths: [4800, 5940],
+      labels: ["4,8m", "5,94m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-27-320-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-27-320-5940'
+      ]
+    }
   },
-
   {
     id: 'constellation-31-320-8x2',
     name: 'Constellation 31.320',
@@ -260,15 +338,21 @@ const constellationModels: TruckModel[] = [
     power: '315 cv',
     torque: '1.200 Nm',
     weight: '23.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ukT8A2VtqGATQO1zXaIh2VKYlx7DMoRfPJ8u'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ukT8A2VtqGATQO1zXaIh2VKYlx7DMoRfPJ8u',
+    chassisConfig: {
+      lengths: [4800, 5940],
+      labels: ["4,8m", "5,94m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-31-320-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-31-320-5940'
+      ]
+    }
   },
-
-{
+  {
     id: 'constellation-32-380-6x4',
     name: 'Constellation 32.380',
     type: 'constellation',
     variant: '6x4',
-  
     specs: [
       { label: 'Motor', value: 'Cummins / ISL' },
       { label: 'Transmissão', value: 'ZF /12TX2624TD' },
@@ -280,10 +364,17 @@ const constellationModels: TruckModel[] = [
     power: '375 cv',
     torque: '1.700 Nm',
     weight: '23.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0uoIfTgCVtqGATQO1zXaIh2VKYlx7DMoRfPJ8'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0uoIfTgCVtqGATQO1zXaIh2VKYlx7DMoRfPJ8',
+    chassisConfig: {
+      lengths: [4800, 5940],
+      labels: ["4,8m", "5,94m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-32-380-4800',
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-32-380-5940'
+      ]
+    }
   },
-
-{
+  {
     id: 'constellation-33-260-8x4',
     name: 'Constellation 33.260',
     type: 'constellation',
@@ -299,9 +390,15 @@ const constellationModels: TruckModel[] = [
     power: '260 cv',
     torque: '950 Nm',
     weight: '29.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0JDGBgaWuV0vIZ97H8WMrdhYUEm5jAo3sRqSk'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0JDGBgaWuV0vIZ97H8WMrdhYUEm5jAo3sRqSk',
+    chassisConfig: {
+      lengths: [4400],
+      labels: ["4,4m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-33-260-4400'
+      ]
+    }
   },
-
   {
     id: 'constellation-33-480-6x4',
     name: 'Constellation 33.480',
@@ -318,10 +415,16 @@ const constellationModels: TruckModel[] = [
     power: '475 cv',
     torque: '2.400 Nm',
     weight: '74.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0a3HJUc92Ef5jZGDo3qKrlIzbBVkWYh7mnUJ1'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0a3HJUc92Ef5jZGDo3qKrlIzbBVkWYh7mnUJ1',
+    chassisConfig: {
+      lengths: [3200],
+      labels: ["3,2m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-33-480-3200'
+      ]
+    }
   },
-
-{
+  {
     id: 'constellation-19-380-4x2',
     name: 'Constellation 19.380',
     type: 'constellation',
@@ -337,11 +440,17 @@ const constellationModels: TruckModel[] = [
     power: '375 cv',
     torque: '1.700 Nm',
     weight: '45.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr01g3HdAGTWwkoFOpDL1INPn4h7MSZ6H3CAmXf'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr01g3HdAGTWwkoFOpDL1INPn4h7MSZ6H3CAmXf',
+    chassisConfig: {
+      lengths: [3560],
+      labels: ["3,56m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-19-380-3560'
+      ]
+    }
   },
-
-{
-    id: 'constellation-20-480-8x2',
+  {
+    id: 'constellation-20-480-4x2',
     name: 'Constellation 20.480',
     type: 'constellation',
     variant: '4x2',
@@ -356,10 +465,16 @@ const constellationModels: TruckModel[] = [
     power: '475 cv',
     torque: '2.400 Nm',
     weight: '56.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0kd4CvSQIKn0CQqhr7l92dotMaSPiW5byLcpR'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0kd4CvSQIKn0CQqhr7l92dotMaSPiW5byLcpR',
+    chassisConfig: {
+      lengths: [3600],
+      labels: ["3,6m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-20-480-3600'
+      ]
+    }
   },
-
- {
+  {
     id: 'constellation-25-380-8x2',
     name: 'Constellation 25.380',
     type: 'constellation',
@@ -375,17 +490,20 @@ const constellationModels: TruckModel[] = [
     power: '375 cv',
     torque: '1.700 Nm',
     weight: '56.000 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0jgs4nYTpnQ1BeImtf4U09XVAMiu7lGKWChv5'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0jgs4nYTpnQ1BeImtf4U09XVAMiu7lGKWChv5',
+    chassisConfig: {
+      lengths: [3300],
+      labels: ["3,3m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-25-380-3300'
+      ]
+    }
   },
-
- 
-
   {
     id: 'constellation-25-480HD-6x2',
     name: 'Constellation 25.480HD',
     type: 'constellation',
     variant: '6x2',
-
     specs: [
       { label: 'Motor', value: 'MAN / D2676LFAG' },
       { label: 'Transmissão', value: 'ZF / 12TX 2624 TD' },
@@ -397,7 +515,14 @@ const constellationModels: TruckModel[] = [
     power: '475 cv',
     torque: '2.400 Nm',
     weight: '58.500 kg',
-    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0moAt0fcU2NqYFwnbK1XkBThMDtGQVo9vzI5a'
+    imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0moAt0fcU2NqYFwnbK1XkBThMDtGQVo9vzI5a',
+    chassisConfig: {
+      lengths: [3600],
+      labels: ["3,6m"],
+      images: [
+        'https://w1d6f4ppqx.ufs.sh/f/chassis-25-480HD-3600'
+      ]
+    }
   }
 ];
 
@@ -422,7 +547,6 @@ const meteorModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 1
   },
-
   {
     id: 'meteor-29-530-8x4',
     name: 'Meteor Highline 29.530',
@@ -440,10 +564,9 @@ const meteorModels: TruckModel[] = [
     torque: '2.600 Nm',
     weight: '100.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr02JRlo6qdKFseCcpqzHrUtMBAR9VumY4aWDIh',
-   isBestSeller: true,
+    isBestSeller: true,
     salesRank: 2
   },
-
 ];
 
 const deliveryModels: TruckModel[] = [
@@ -467,7 +590,6 @@ const deliveryModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 1
   },
-
   {
     id: 'delivery-6-170',
     name: 'Delivery 6.170',
@@ -488,7 +610,6 @@ const deliveryModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 2
   },
-
   {
     id: 'delivery-express-9-180',
     name: 'Delivery Express 9.180',
@@ -499,7 +620,7 @@ const deliveryModels: TruckModel[] = [
       { label: 'Transmissão', value: 'Automatizada/Manual 6 marchas' },
       { label: 'PBT', value: '9.200 kg' }
     ],
-    features: ['Programa eletronico de estabilizacao (ESP) com ABS + EBD + ATC + ESP', 'Tomadas de 12 V (2 tomadas)', 'Farois halogenos com farol de rodagem diurna de LED', 'Regulagem do facho do farol', 'Aviso sonoro de cinto de seguranca', 'Display multifuncional/computador de bordo "Medium" Cluster black & white', 'Mangueira para limpeza da cabine (conexao da pressao de ar)', ''],
+    features: ['Programa eletronico de estabilizacao (ESP) com ABS + EBD + ATC + ESP', 'Tomadas de 12 V (2 tomadas)', 'Farois halogenos com farol de rodagem diurna de LED', 'Regulagem do facho do farol', 'Aviso sonoro de cinto de seguranca', 'Display multifuncional/computador de bordo "Medium" Cluster black & white', 'Mangueira para limpeza da cabine (conexao da pressao de ar)'],
     transmission: 'Manual 5 vel.',
     engine: 'Cummins / ISF 3.8l',
     power: '175 cv',
@@ -509,7 +630,6 @@ const deliveryModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 3
   },
-
   {
     id: 'delivery-11-180',
     name: 'Delivery 11.180',
@@ -530,7 +650,6 @@ const deliveryModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 4
   },
-
   {
     id: 'delivery-11-1804x4',
     name: 'Delivery 11.180 4x4',
@@ -551,7 +670,6 @@ const deliveryModels: TruckModel[] = [
     isBestSeller: true,
     salesRank: 5
   },
-
   {
     id: 'delivery-14-180',
     name: 'Delivery 14.180',
@@ -569,9 +687,7 @@ const deliveryModels: TruckModel[] = [
     torque: '600 Nm',
     weight: '14.000 kg',
     imageUrl: 'https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0UxbSsCOBPWOC41hMj5dRwYcy7HAZL98apmGg',
-    
   }
-
 ];
 
 interface TruckModelSelectorProps {
@@ -608,8 +724,8 @@ export default function TruckModelSelector({ onConfigure }: TruckModelSelectorPr
 
   const currentModels = getCurrentModels();
   const bestSellers = currentModels
-    .filter(model => model.isBestSeller)
-    .sort((a, b) => (a.salesRank || 99) - (b.salesRank || 99))
+    .filter((model: TruckModel) => model.isBestSeller)
+    .sort((a: TruckModel, b: TruckModel) => (a.salesRank || 99) - (b.salesRank || 99))
     .slice(0, 5);
 
   const modelsToDisplay = showAllModels ? currentModels : bestSellers;
@@ -668,7 +784,7 @@ export default function TruckModelSelector({ onConfigure }: TruckModelSelectorPr
       </section>
 
       <main className={`vw-models-grid ${isAnimating ? 'fade-out' : 'fade-in'}`}>
-        {modelsToDisplay.map((model) => (
+        {modelsToDisplay.map((model: TruckModel) => (
           <div 
             key={model.id} 
             className="vw-truck-card"
@@ -688,7 +804,6 @@ export default function TruckModelSelector({ onConfigure }: TruckModelSelectorPr
             <div className="card-content">
               <div className="card-header">
                 <h3>{model.name}</h3>
-                
               </div>
               
               <div className="card-mini-specs">
@@ -740,7 +855,6 @@ export default function TruckModelSelector({ onConfigure }: TruckModelSelectorPr
                   )}
                   <span className="model-tag">{selectedModel.type}</span>
                   <h2>{selectedModel.name}</h2>
-                  
                 </div>
               </div>
 

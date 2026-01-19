@@ -6,6 +6,7 @@ interface Delivery360ViewerProps {
   color?: string; 
   model?: string;
   scale?: number;
+  chassisLength?:number;
 }
 
 const DELIVERY_IMAGES_BY_COLOR: Record<string, string[]> = {

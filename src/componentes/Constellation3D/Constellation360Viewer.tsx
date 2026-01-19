@@ -8,6 +8,7 @@ interface Constellation360ViewerProps {
   model?: string;
 }
 
+const imageCache: Map<string, HTMLImageElement[]> = new Map();
 const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
   scale = 1.3,
   color = "Branco Geada",
@@ -18,8 +19,7 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
   const [showSwipeHint, setShowSwipeHint] = useState(true); 
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-
-
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   
   const IMAGES_BY_COLOR: Record<string, string[]> = {
     "Bege Agata": [
@@ -64,15 +64,13 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
     ],
     "Amarelo Bem-te-vi": [
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0VkBtT2sL1DNU2SGCArKHqVeJ4nfl9TgbFaEk",
-      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0FQg2EYi1Nu85fCjEqUGF4ShW0BLK2Q9oetJw",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0hJQrF7eXeVMRwOltd6mGH1Q9oEKAj4bJPYnc",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr05bdcDCAogYsJSVxeRWa64uM89yBcTbjmdDhr",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0T0kD2nwQq8tcohsp3zfJbrmlFSZ0LIYnyGBg",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ep3R3NCEbxGi5NQcAgOoz90UWutYymLdphqX",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0QoQotAXBFSiugpXPo13x7Dmj4T2JUf8EZWCH",
-      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr03eolfuoNcujJtS6L1nNTlORwF5girxpQAhDe",
-      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0oUyuHgkrn5e3P96qY4K7bOAatLUuDXzGRFc0"
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0uOAdeyVtqGATQO1zXaIh2VKYlx7DMoRfPJ8u"
     ],
-
     "Branco Geada": [
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0C4FNpumzV9IYuXMtKSm4brNO7Zyd6ojwcLRv",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0alwfB2D92Ef5jZGDo3qKrlIzbBVkWYh7mnUJ",
@@ -82,32 +80,75 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr05iTsQVAogYsJSVxeRWa64uM89yBcTbjmdDhr",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr03ElVyMNcujJtS6L1nNTlORwF5girxpQAhDe4",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0ql9nnXKKEuBMIyJ7TZsox1eXWNOAg3GQawS5"
-      
     ],
-
     "Cinza MoonStone": [
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0hWD8LreXeVMRwOltd6mGH1Q9oEKAj4bJPYnc",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0TN37PQwQq8tcohsp3zfJbrmlFSZ0LIYnyGBg",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0nRtqtPZqjhFbPT5JVCkQ1myXAniRBrY3a2xc",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0dDVxKErOzs3jGHqVxX2NQYaeLZtom64igWbp",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0kIaBWYQIKn0CQqhr7l92dotMaSPiW5byLcpR",
-      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0uoIm3HhVtqGATQO1zXaIh2VKYlx7DMoRfPJ8",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0T2JP26wQq8tcohsp3zfJbrmlFSZ0LIYnyGBg",
+      "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0uoIm3HhVtqGATQO1zXaIh2VKYlx7DMoRfPJ8",
       "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0cs5Tdb0u8IYaiM4OWKlZQyt6Dxz3FRV0svCS"
     ]
-
   };
 
   const getImageSequence = () => {
     if (color && IMAGES_BY_COLOR[color]) {
       return IMAGES_BY_COLOR[color];
     }
-    
     return IMAGES_BY_COLOR["Branco Geada"];
   };
 
   const IMAGE_SEQUENCE = getImageSequence();
   const totalFrames = IMAGE_SEQUENCE.length;
+  const preloadImages = (urls: string[], colorKey: string) => {
+    if (imageCache.has(colorKey)) {
+      return;
+    }
+
+    urls.forEach((src, index) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        if (!imageCache.has(colorKey)) {
+          imageCache.set(colorKey, []);
+        }
+        const cache = imageCache.get(colorKey);
+        if (cache) {
+          cache[index] = img;
+        }
+      };
+    });
+  };
+
+  useEffect(() => {
+    setCurrentFrame(0);
+    setShowSwipeHint(true);
+    
+    preloadImages(IMAGE_SEQUENCE, color);
+    
+    if (autoRotateRef.current) {
+      clearInterval(autoRotateRef.current);
+    }
+    
+    autoRotateRef.current = setInterval(() => {
+      if (!isDragging) {
+        rotateTo('right');
+      }
+    }, 3000);
+
+    const hintTimer = setTimeout(() => {
+      setShowSwipeHint(false);
+    }, 5000);
+
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+      clearTimeout(hintTimer);
+    };
+  }, [color, isDragging]);
 
   const rotateTo = (direction: 'left' | 'right') => {
     const increment = direction === 'left' ? -1 : 1;
@@ -169,26 +210,13 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
     return `VW Constellation ${color} - Vista ${currentFrame + 1} de ${totalFrames}`;
   };
 
-  useEffect(() => {
-    setCurrentFrame(0);
-  }, [color]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isDragging) {
-        rotateTo('right');
-      }
-    }, 3000);
-
-    const hintTimer = setTimeout(() => {
-      setShowSwipeHint(false);
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(hintTimer);
-    };
-  }, [currentFrame, isDragging, color]);
+  const getCurrentImageUrl = () => {
+    const cachedImages = imageCache.get(color);
+    if (cachedImages && cachedImages[currentFrame]) {
+      return cachedImages[currentFrame].src;
+    }
+    return IMAGE_SEQUENCE[currentFrame];
+  };
 
   const imageStyle = {
     filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.4))`,
@@ -224,10 +252,15 @@ const Constellation360Viewer: React.FC<Constellation360ViewerProps> = ({
           <div className="image-wrapper">
             <img
               ref={imageRef}
-              src={IMAGE_SEQUENCE[currentFrame]}
+              src={getCurrentImageUrl()}
               alt={getImageAltText()}
               className="current-image"
               style={imageStyle}
+              onLoad={() => {
+                if (imageCache.get(color)?.[currentFrame]) {
+                  imageRef.current?.style.setProperty('opacity', '1');
+                }
+              }}
             />
           </div>
         </div>

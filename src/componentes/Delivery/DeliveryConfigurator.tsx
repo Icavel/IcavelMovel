@@ -1,20 +1,25 @@
 // src/components/Delivery/DeliveryConfigurator.tsx
-import { useState } from "react";
-import { 
-  ChevronRight, 
-  Check, 
-  RotateCcw, 
-  Share2, 
-  FileText, 
+import { useState, useEffect } from "react";
+import {
+  ChevronRight,
+  Check,
+  RotateCcw,
+  Share2,
+  FileText,
   Palette,
   Package,
   Truck,
   Settings,
   Shield,
-  Zap
+  Zap,
+  Ruler,
+  MessageCircle,
+  Loader2
 } from "lucide-react";
 import "./DeliveryPage.css";
 import Delivery360Viewer from "./Delivery360Viewer";
+import ChassisLengthSection from "../Shared/ChassisLengthSection";
+import { generateProposalPDF, safeDownloadPDF } from "../../services/pdfService";
 
 interface TruckModel {
   id: string;
@@ -31,6 +36,14 @@ interface TruckModel {
   imageUrl: string;
   isBestSeller?: boolean;
   salesRank?: number;
+  chassisConfig?: {
+    lengths: number[];
+    minLength?: number;
+    maxLength?: number;
+    step?: number;
+    unit?: string;
+    recommendedLength?: number;
+  };
 }
 
 interface Props {
@@ -41,6 +54,7 @@ interface Props {
 interface Config {
   pintura: Pintura;
   pacotes: Pacote[];
+  chassisLength?: number;
 }
 
 interface Pacote {
@@ -51,6 +65,7 @@ interface Pacote {
   beneficios: string[];
   selecionado: boolean;
   categoria: string;
+  disponivel?: boolean;
 }
 
 interface Pintura {
@@ -58,6 +73,64 @@ interface Pintura {
   colorCode: string;
   categoria: string;
 }
+
+interface UserData {
+  name: string;
+  phone: string;
+  acceptsMarketing: boolean;
+}
+
+// Configurações específicas para cada modelo
+const deliveryModelsConfig = {
+  "delivery-express": {
+    name: "Delivery Express",
+    chassisLengths: [3000, 3100, 3200, 3300, 3400, 3500, 3600],
+    minLength: 3000,
+    maxLength: 3600,
+    step: 100,
+    defaultLength: 3300
+  },
+  "delivery-6170": {
+    name: "6.170",
+    chassisLengths: [4000],
+    minLength: 4000,
+    maxLength: 4000,
+    step: 100,
+    defaultLength: 4000
+  },
+  "delivery-9180": {
+    name: "9.180",
+    chassisLengths: [3400, 4000, 4400, 4600],
+    minLength: 3400,
+    maxLength: 4600,
+    step: 100,
+    defaultLength: 4000
+  },
+  "delivery-11180": {
+    name: "11.180",
+    chassisLengths: [3400, 4000, 4400, 4600],
+    minLength: 3400,
+    maxLength: 4600,
+    step: 100,
+    defaultLength: 4000
+  },
+  "delivery-1180-4x4": {
+    name: "11.80 4x4",
+    chassisLengths: [4000],
+    minLength: 4000,
+    maxLength: 4000,
+    step: 100,
+    defaultLength: 4000
+  },
+  "delivery-14180": {
+    name: "14.180",
+    chassisLengths: [2955, 3305, 4400],
+    minLength: 2955,
+    maxLength: 4400,
+    step: 100,
+    defaultLength: 3305
+  }
+};
 
 const pacotesFechados: Pacote[] = [
   {
@@ -79,7 +152,8 @@ const pacotesFechados: Pacote[] = [
       "Redução da fadiga",
       "Climatização otimizada"
     ],
-    selecionado: false
+    selecionado: false,
+    disponivel: true
   },
   {
     codigo: "PSE",
@@ -100,7 +174,8 @@ const pacotesFechados: Pacote[] = [
       "Redução de roubos",
       "Maior controle operacional"
     ],
-    selecionado: false
+    selecionado: false,
+    disponivel: true
   },
   {
     codigo: "PPE",
@@ -121,7 +196,8 @@ const pacotesFechados: Pacote[] = [
       "Maior durabilidade",
       "Menor custo de manutenção"
     ],
-    selecionado: false
+    selecionado: false,
+    disponivel: true
   },
   {
     codigo: "PLO",
@@ -142,7 +218,8 @@ const pacotesFechados: Pacote[] = [
       "Versatilidade operacional",
       "Segurança da carga"
     ],
-    selecionado: false
+    selecionado: false,
+    disponivel: true
   }
 ];
 
@@ -161,17 +238,70 @@ const opcionais = {
 };
 
 export default function DeliveryConfigurator({ selectedModel }: Props) {
-  const [currentStep, setCurrentStep] = useState<"cor" | "pacotes" | "resumo">("cor");
+  const [currentStep, setCurrentStep] = useState<"chassis" | "cor" | "pacotes" | "resumo">("chassis");
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [chassisLength, setChassisLength] = useState<number>(4000);
+
   const [config, setConfig] = useState<Config>({
     pintura: opcionais.pintura[0],
-    pacotes: pacotesFechados.map(p => ({ ...p, selecionado: false }))
+    pacotes: pacotesFechados.map(p => ({ ...p, selecionado: false })),
+    chassisLength: 4000
   });
+
+  // Obtém configurações específicas do modelo
+  const getModelConfig = () => {
+    if (!selectedModel?.id) {
+      return {
+        lengths: [4000, 4500, 5000, 5500, 6000],
+        minLength: 4000,
+        maxLength: 6000,
+        step: 100,
+        defaultLength: 4500
+      };
+    }
+
+    const modelKey = selectedModel.id.toLowerCase();
+    const modelConfig = deliveryModelsConfig[modelKey as keyof typeof deliveryModelsConfig];
+
+    if (modelConfig) {
+      return {
+        lengths: modelConfig.chassisLengths,
+        minLength: modelConfig.minLength,
+        maxLength: modelConfig.maxLength,
+        step: modelConfig.step,
+        defaultLength: modelConfig.defaultLength
+      };
+    }
+
+    // Configuração padrão para modelos não especificados
+    return {
+      lengths: selectedModel?.chassisConfig?.lengths || [4000, 4500, 5000, 5500, 6000],
+      minLength: selectedModel?.chassisConfig?.minLength || 4000,
+      maxLength: selectedModel?.chassisConfig?.maxLength || 6000,
+      step: selectedModel?.chassisConfig?.step || 100,
+      defaultLength: selectedModel?.chassisConfig?.recommendedLength || 4500
+    };
+  };
+
+  useEffect(() => {
+    const modelConfig = getModelConfig();
+    const defaultLength = modelConfig.defaultLength || modelConfig.lengths[0];
+
+    setChassisLength(defaultLength);
+    setConfig(prev => ({
+      ...prev,
+      chassisLength: defaultLength
+    }));
+  }, [selectedModel]);
 
   const handleSelectPintura = (pintura: Pintura) => {
     setConfig(prev => ({ ...prev, pintura }));
   };
 
   const handleTogglePacote = (codigo: string) => {
+    const pacote = config.pacotes.find(p => p.codigo === codigo);
+    if (!pacote || (pacote.disponivel === false)) return;
+
     setConfig(prev => ({
       ...prev,
       pacotes: prev.pacotes.map(p =>
@@ -180,8 +310,23 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
     }));
   };
 
+  const handleChassisLengthChange = (length: number) => {
+    const modelConfig = getModelConfig();
+
+    // Verifica se o comprimento está dentro dos limites permitidos
+    if (length >= modelConfig.minLength && length <= modelConfig.maxLength) {
+      setChassisLength(length);
+      setConfig(prev => ({ ...prev, chassisLength: length }));
+    } else {
+      // Se fora dos limites, ajusta para o mais próximo
+      const clampedLength = Math.max(modelConfig.minLength, Math.min(modelConfig.maxLength, length));
+      setChassisLength(clampedLength);
+      setConfig(prev => ({ ...prev, chassisLength: clampedLength }));
+    }
+  };
+
   const getCategoriaIcon = (categoria: string) => {
-    switch(categoria) {
+    switch (categoria) {
       case "conforto": return Settings;
       case "segurança": return Shield;
       case "performance": return Zap;
@@ -190,8 +335,159 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
     }
   };
 
+  const getUserData = () => {
+    try {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        return {
+          name: parsedData.name || '',
+          phone: parsedData.phone || ''
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao obter dados do usuário:', error);
+      return null;
+    }
+  };
+
+  const handleGenerateProposal = async () => {
+    const userData = getUserData();
+
+    if (!userData || !userData.name || !userData.phone) {
+      alert('Dados do cliente não encontrados. Por favor, faça login novamente.');
+      return;
+    }
+
+    setIsGeneratingPDF(true);
+
+    try {
+      const modelConfig = getModelConfig();
+
+      const truckData = {
+        name: selectedModel?.name || 'Delivery',
+        variant: selectedModel?.variant || 'Baú Standard',
+        engine: selectedModel?.engine || '',
+        power: selectedModel?.power || '',
+        torque: selectedModel?.torque || '',
+        weight: selectedModel?.weight || '',
+        type: selectedModel?.type || 'delivery',
+      };
+
+      const configuration = {
+        chassisLength: config.chassisLength || modelConfig.defaultLength,
+        paint: {
+          nome: config.pintura.nome,
+          colorCode: config.pintura.colorCode,
+        },
+        packages: config.pacotes
+          .filter(p => p.selecionado)
+          .map(p => ({
+            codigo: p.codigo,
+            nome: p.nome,
+            categoria: p.categoria,
+          })),
+      };
+
+      const pdfBlob = await generateProposalPDF(userData, truckData, configuration);
+      const fileName = `Proposta_${selectedModel?.name || 'Delivery'}_${userData.name.replace(/\s+/g, '_')}.pdf`;
+      const downloadSuccess = await safeDownloadPDF(pdfBlob, fileName);
+
+      if (!downloadSuccess) {
+        const url = URL.createObjectURL(pdfBlob);
+        alert(
+          '📄 PDF gerado!\n\n' +
+          'Para baixar manualmente:\n' +
+          '1. Clique no link abaixo\n' +
+          '2. Use "Salvar como" no menu do navegador\n\n' +
+          `Link: ${url.substring(0, 50)}...`
+        );
+
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      }
+
+      const message = `Olá ${userData.name}! 🌟
+
+Acabamos de gerar sua proposta para o *${selectedModel?.name || 'Delivery'}* que você configurou!
+
+📋 *Resumo da configuração:*
+• Modelo: ${selectedModel?.name || 'Delivery'}
+• Cor: ${config.pintura.nome}
+• Comprimento do chassi: ${(chassisLength / 1000).toFixed(3)}m
+• Pacotes selecionados: ${config.pacotes.filter(p => p.selecionado).length}
+
+📎 O PDF com todos os detalhes está disponível para download.
+
+Agradecemos sua preferência! 🚚
+
+*Equipe Icavel Caminhões & Ônibus*`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const cleanPhone = userData.phone.replace(/\D/g, '');
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 1000);
+
+    } catch (error) {
+      console.error('Erro ao gerar proposta:', error);
+
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        alert(
+          '⚠️ Dispositivo móvel detectado\n\n' +
+          'Para melhor experiência:\n' +
+          '1. Use o navegador Chrome\n' +
+          '2. Permita pop-ups e downloads\n' +
+          '3. Tente novamente\n\n' +
+          'Se o problema persistir, entre em contato com nosso suporte.'
+        );
+      } else {
+        alert('❌ Erro ao gerar proposta. Por favor, tente novamente.');
+      }
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   const renderControls = () => {
+    const modelConfig = getModelConfig();
+
     switch (currentStep) {
+      case "chassis":
+        return (
+          <div className="step-container">
+            <div className="section-header">
+              <h3 className="section-title">
+                <Ruler size={20} className="section-icon" />
+                Configuração do Chassi
+              </h3>
+              <p className="section-subtitle">
+                {selectedModel ? `Selecione o comprimento do chassi para seu ${selectedModel.name}.` : "Selecione o comprimento do chassi do seu Delivery."}
+              </p>
+            </div>
+
+            <div className="step-content">
+              <ChassisLengthSection
+                selectedLength={chassisLength}
+                onLengthChange={handleChassisLengthChange}
+                selectedTruckModel={{
+                  id: selectedModel?.id || '',
+                  name: selectedModel?.name || 'Delivery',
+                  chassisConfig: {
+                    lengths: modelConfig.lengths,
+                    labels: modelConfig.lengths.map(l => `${(l / 1000).toFixed(3).replace('.', ',')}m`)
+                  }
+                }}
+              />
+            </div>
+          </div>
+        );
+
       case "cor":
         return (
           <div className="step-container">
@@ -261,9 +557,15 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                   return (
                     <div
                       key={pacote.codigo}
-                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''}`}
-                      onClick={() => handleTogglePacote(pacote.codigo)}
+                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''} ${pacote.disponivel === false ? 'unavailable' : ''}`}
+                      onClick={() => pacote.disponivel !== false && handleTogglePacote(pacote.codigo)}
                     >
+                      {pacote.disponivel === false && (
+                        <div className="unavailable-overlay">
+                          <span>Indisponível para este modelo</span>
+                        </div>
+                      )}
+
                       <div className="pacote-header">
                         <div className="pacote-cabecalho">
                           <div className="pacote-icon-container">
@@ -277,12 +579,12 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                               <span>{pacote.categoria.charAt(0).toUpperCase() + pacote.categoria.slice(1)}</span>
                             </div>
                           </div>
-                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''}`}>
+                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''} ${pacote.disponivel === false ? 'disabled' : ''}`}>
                             {pacote.selecionado && <Check size={14} />}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="pacote-conteudo">
                         <div className="pacote-descricao">
                           <h5 className="descricao-titulo">Inclui:</h5>
@@ -300,7 +602,7 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                             )}
                           </ul>
                         </div>
-                        
+
                         <div className="pacote-beneficios">
                           <h5 className="beneficios-titulo">Benefícios:</h5>
                           <div className="beneficios-tags">
@@ -329,7 +631,7 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                 Resumo da Configuração
               </h3>
               <p className="section-subtitle">
-                Visão geral técnica do seu {selectedModel?.name || 'Delivery'} configurado.
+                Configuração final do seu {selectedModel?.name || 'Delivery'}. Clique em "Gerar Proposta" para enviar por WhatsApp.
               </p>
             </div>
 
@@ -343,11 +645,11 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                 <div className="summary-list">
                   <div className="summary-item">
                     <span>Modelo</span>
-                    <strong>{selectedModel?.name || 'Delivery 9-170'}</strong>
+                    <strong>{selectedModel?.name || 'Delivery'}</strong>
                   </div>
                   <div className="summary-item">
                     <span>Versão</span>
-                    <strong>{selectedModel?.variant || 'Baú 30m³'}</strong>
+                    <strong>{selectedModel?.variant || 'Standard'}</strong>
                   </div>
                   {selectedModel?.engine && (
                     <div className="summary-item">
@@ -355,6 +657,10 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                       <strong>{selectedModel.engine}</strong>
                     </div>
                   )}
+                  <div className="summary-item">
+                    <span>Comprimento do Chassi</span>
+                    <strong>{(chassisLength / 1000).toFixed(3)}m</strong>
+                  </div>
                 </div>
               </div>
 
@@ -446,24 +752,24 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
                   disponibilidade, consulte a concessionária.
                 </p>
               </div>
-
             </div>
           </div>
         );
     }
   };
 
+  const modelConfig = getModelConfig();
+
   return (
     <div className="delivery-configurator">
-
-      
       <div className="configurator-content">
         <div className="viewer-container">
           <div className="vehicle-container">
             <div className="vehicle-viewer-wrapper">
-              <Delivery360Viewer 
-                model={selectedModel?.name || "Delivery"} 
+              <Delivery360Viewer
+                model={selectedModel?.name || "Delivery"}
                 color={config.pintura.colorCode}
+                chassisLength={chassisLength}
               />
             </div>
           </div>
@@ -472,9 +778,10 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
         <div className="config-panel">
           <div className="tabs-container">
             {[
-              { id: "cor" as const, label: "01. Cor", icon: Palette },
-              { id: "pacotes" as const, label: "02. Pacotes", icon: Package },
-              { id: "resumo" as const, label: "03. Resumo", icon: FileText },
+              { id: "chassis" as const, label: "01. Chassi", icon: Ruler },
+              { id: "cor" as const, label: "02. Cor", icon: Palette },
+              { id: "pacotes" as const, label: "03. Pacote", icon: Package },
+              { id: "resumo" as const, label: "04. Resumo", icon: FileText },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -496,38 +803,59 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
 
           <div className="config-footer">
             <div className="action-buttons action-buttons-sm">
-              <button
-                onClick={() => {
-                  const nextSteps: Record<typeof currentStep, typeof currentStep | null> = {
-                    cor: "pacotes",
-                    pacotes: "resumo",
-                    resumo: null
-                  };
+              {currentStep === 'resumo' ? (
+                <button
+                  onClick={handleGenerateProposal}
+                  disabled={isGeneratingPDF}
+                  className="btn-primary btn-sm btn-generar-proposta"
+                  style={{
+                    backgroundColor: '#25D366',
+                    minWidth: '200px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isGeneratingPDF ? (
+                    <>
+                      <Loader2 className="spinner" size={16} />
+                      Gerando...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle size={16} />
+                      Gerar Proposta
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    const nextSteps: Record<string, string> = {
+                      chassis: "cor",
+                      cor: "pacotes",
+                      pacotes: "resumo",
+                      resumo: "chassis"
+                    };
+                    setCurrentStep(nextSteps[currentStep] as any);
+                  }}
+                  className="btn-primary btn-sm"
+                >
+                  {currentStep === 'pacotes' ? 'Ver Resumo' : 'Continuar'}
+                  <ChevronRight size={16} className="btn-icon" />
+                </button>
+              )}
 
-                  if (currentStep === 'resumo') {
-                    const modelName = selectedModel?.name || 'Delivery';
-                    alert(`🚚 Proposta para ${modelName} gerada com sucesso!\n\nUm consultor entrará em contato em até 24 horas.`);
-                  } else {
-                    const nextStep = nextSteps[currentStep];
-                    if (nextStep) setCurrentStep(nextStep);
-                  }
-                }}
-                className="btn-primary btn-sm"
-              >
-                {currentStep === 'resumo' ? 'Finalizar' : 'Continuar'}
-                <ChevronRight size={16} className="btn-icon" />
-              </button>
-
-              <button className="btn-secondary btn-sm">
-                <Share2 size={14} className="btn-icon" /> Compartilhar
-              </button>
               <button
                 onClick={() => {
                   setConfig({
                     pintura: opcionais.pintura[0],
-                    pacotes: pacotesFechados.map(p => ({ ...p, selecionado: false }))
+                    pacotes: pacotesFechados.map(p => ({ ...p, selecionado: false })),
+                    chassisLength: modelConfig.defaultLength
                   });
-                  setCurrentStep("cor");
+                  setCurrentStep("chassis");
+                  setChassisLength(modelConfig.defaultLength);
                 }}
                 className="btn-outline btn-sm"
               >

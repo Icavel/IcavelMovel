@@ -11,100 +11,6 @@ import LandingSalesEvents from './componentes/LandingSalesEvents';
 import RecommendationPage from './RecommendationPage';
 import LoginScreen from './LoginScreen';
 
-const mockTruckData: TruckModel = {
-  id: 'constellation-1',
-  name: 'Constellation 24.280',
-  type: 'constellation',
-  variant: '24.280 6x2',
-  price: 'R$ 350.000',
-  image: 'https://images.unsplash.com/photo-1563729142219-14fa8d936a1d?auto=format&fit=crop&w=800',
-  imageUrl: 'https://images.unsplash.com/photo-1563729142219-14fa8d936a1d?auto=format&fit=crop&w=800',
-  description: 'Caminhão pesado com excelente desempenho e conforto',
-  features: [
-    'Motor 280cv',
-    'Transmissão automatizada',
-    'Cabine sleeper',
-    'ABS e airbag',
-    'Ar condicionado',
-    'Direção hidráulica'
-  ],
-  specs: {
-    engine: '6 cilindros, turbo diesel',
-    transmission: 'Automática 12 velocidades',
-    power: '280 cv',
-    torque: '120 kgfm',
-    capacity: '24 toneladas'
-  },
-  transmission: 'Automática 12 velocidades',
-  engine: '6 cilindros, turbo diesel',
-  power: '280 cv',
-  torque: '120 kgfm',
-  capacity: '24 toneladas',
-  weight: '12.000 kg'
-};
-
-const meteorData: TruckModel = {
-  id: 'meteor-1',
-  name: 'Meteor 31.320',
-  type: 'meteor',
-  variant: '31.320 6x4',
-  price: 'R$ 420.000',
-  image: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800',
-  imageUrl: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=800',
-  description: 'Caminhão extra pesado para trabalhos mais exigentes',
-  features: [
-    'Motor 320cv',
-    'Transmissão automatizada',
-    'Cabine completa',
-    'Suspensão a ar',
-    'Freios a disco'
-  ],
-  specs: {
-    engine: '8 cilindros, turbo diesel',
-    transmission: 'Automática 16 velocidades',
-    power: '320 cv',
-    torque: '160 kgfm',
-    capacity: '31 toneladas'
-  },
-  transmission: 'Automática 16 velocidades',
-  engine: '8 cilindros, turbo diesel',
-  power: '320 cv',
-  torque: '160 kgfm',
-  capacity: '31 toneladas',
-  weight: '15.000 kg'
-};
-
-const deliveryData: TruckModel = {
-  id: 'delivery-1',
-  name: 'Delivery Express 11.180',
-  type: 'delivery',
-  variant: '11.180 4x2',
-  price: 'R$ 185.000',
-  image: 'https://images.unsplash.com/photo-1593941707882-a5bba5338fe2?auto=format&fit=crop&w=800',
-  imageUrl: 'https://images.unsplash.com/photo-1593941707882-a5bba5338fe2?auto=format&fit=crop&w=800',
-  description: 'Veículo urbano ideal para entregas rápidas',
-  features: [
-    'Motor 180cv',
-    'Transmissão manual',
-    'Baú refrigerado opcional',
-    'Baixo consumo',
-    'Manutenção simples'
-  ],
-  specs: {
-    engine: '4 cilindros, turbo diesel',
-    transmission: 'Manual 6 velocidades',
-    power: '180 cv',
-    torque: '70 kgfm',
-    capacity: '11 toneladas'
-  },
-  transmission: 'Manual 6 velocidades',
-  engine: '4 cilindros, turbo diesel',
-  power: '180 cv',
-  torque: '70 kgfm',
-  capacity: '11 toneladas',
-  weight: '6.500 kg'
-};
-
 const EventsPage = () => {
   const navigate = useNavigate();
 
@@ -225,24 +131,6 @@ const ConsultantsPage = () => {
           </div>
 
         </div>
-        <div>
-
-        </div>
-        <div >
-
-        </div>
-        <div>
-
-        </div>
-
-        <div>
-
-
-        </div>
-
-        <div>
-
-        </div>
       </div>
     </div>
   );
@@ -277,8 +165,64 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
-function App() {
+// Componente para guardar o estado do caminhão selecionado
+const TruckConfiguratorWrapper: React.FC<{
+  type: 'constellation' | 'meteor' | 'delivery';
+  onBack: () => void;
+}> = ({ type, onBack }) => {
   const [selectedTruck, setSelectedTruck] = useState<TruckModel | null>(null);
+  const navigate = useNavigate();
+
+  // Recuperar o caminhão do localStorage ao montar
+  useEffect(() => {
+    const savedTruck = localStorage.getItem('selectedTruck');
+    if (savedTruck) {
+      try {
+        const truckData = JSON.parse(savedTruck);
+        setSelectedTruck(truckData);
+      } catch (error) {
+        console.error('Erro ao carregar caminhão selecionado:', error);
+        navigate('/truck-selector');
+      }
+    } else {
+      // Se não houver caminhão salvo, voltar para seleção
+      navigate('/truck-selector');
+    }
+  }, [navigate]);
+
+  // Renderizar o configurador correto baseado no tipo
+  if (!selectedTruck) {
+    return <div>Carregando configuração...</div>;
+  }
+
+  switch (type) {
+    case 'constellation':
+      return (
+        <ConstellationConfigurator
+          selectedModel={selectedTruck as any}
+          onBack={onBack}
+        />
+      );
+    case 'meteor':
+      return (
+        <MeteorConfigurator
+          selectedModel={selectedTruck as any}
+          onBack={onBack}
+        />
+      );
+    case 'delivery':
+      return (
+        <DeliveryConfigurator
+          selectedModel={selectedTruck as any}
+          onBack={onBack}
+        />
+      );
+    default:
+      return <Navigate to="/truck-selector" replace />;
+  }
+};
+
+function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -289,21 +233,16 @@ function App() {
   }, []);
 
   const handleTruckConfigure = (model: any) => {
-    const convertedModel: TruckModel = {
-      ...model,
-      id: String(model.id),
-      specs: typeof model.specs === 'object' && !Array.isArray(model.specs)
-        ? model.specs
-        : undefined
-    };
-
-    setSelectedTruck(convertedModel);
-
-    if (convertedModel.type === 'meteor') {
+    // Salvar o caminhão selecionado no localStorage
+    localStorage.setItem('selectedTruck', JSON.stringify(model));
+    
+    // Navegar para o configurador correto usando window.location
+    // (mantendo compatibilidade com o código existente)
+    if (model.type === 'meteor') {
       window.location.href = '/meteor';
-    } else if (convertedModel.type === 'constellation') {
+    } else if (model.type === 'constellation') {
       window.location.href = '/constellation';
-    } else if (convertedModel.type === 'delivery') {
+    } else if (model.type === 'delivery') {
       window.location.href = '/delivery';
     }
   };
@@ -315,6 +254,14 @@ function App() {
 
   const handleNavigate = (page: string) => {
     window.location.href = `/${page}`;
+  };
+
+  // Função para voltar corretamente
+  const handleBackFromConfigurator = () => {
+    // Remover o caminhão salvo
+    localStorage.removeItem('selectedTruck');
+    // Voltar para o seletor
+    window.location.href = '/truck-selector';
   };
 
   return (
@@ -379,13 +326,14 @@ function App() {
             }
           />
 
+          {/* Configuradores com estado mantido */}
           <Route
             path="/meteor"
             element={
               <ProtectedRoute>
-                <MeteorConfigurator
-                  selectedModel={(selectedTruck || meteorData) as any}
-                  onBack={() => window.history.back()}
+                <TruckConfiguratorWrapper 
+                  type="meteor" 
+                  onBack={handleBackFromConfigurator} 
                 />
               </ProtectedRoute>
             }
@@ -395,9 +343,9 @@ function App() {
             path="/constellation"
             element={
               <ProtectedRoute>
-                <ConstellationConfigurator
-                  selectedModel={(selectedTruck || mockTruckData) as any}
-                  onBack={() => window.history.back()}
+                <TruckConfiguratorWrapper 
+                  type="constellation" 
+                  onBack={handleBackFromConfigurator} 
                 />
               </ProtectedRoute>
             }
@@ -407,9 +355,9 @@ function App() {
             path="/delivery"
             element={
               <ProtectedRoute>
-                <DeliveryConfigurator
-                  selectedModel={(selectedTruck || deliveryData) as any}
-                  onBack={() => window.history.back()}
+                <TruckConfiguratorWrapper 
+                  type="delivery" 
+                  onBack={handleBackFromConfigurator} 
                 />
               </ProtectedRoute>
             }

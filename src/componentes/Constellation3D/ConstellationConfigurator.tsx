@@ -22,12 +22,18 @@ import {
 import "./ConstellationConfigurator.css";
 import type { TruckModel } from '../TruckModelSelector/TruckModelSelector';
 import Constellation360Viewer from "../Constellation3D/Constellation360Viewer";
-import ChassisLengthSection from "./ChassisLengthSection"; 
+import ChassisLengthSection from "../Shared/ChassisLengthSection";
 import { generateProposalPDF, downloadPDF, safeDownloadPDF } from "../../services/pdfService";
+
+interface ImageConfig {
+  logoUrl: string;
+  viewerIconUrl: string;
+}
 
 interface Props {
   selectedModel: TruckModel;
   onBack?: () => void;
+  images?: ImageConfig;
 }
 
 interface Pintura {
@@ -156,9 +162,15 @@ const opcionaisPintura: Pintura[] = [
   { nome: "Cinza MoonStone", colorCode: "#565f6b", categoria: "Metálica" },
   { nome: "Branco Geada", colorCode: "#ffffff", categoria: "Sólida" }
 ];
+export default function ConstellationConfigurator({ 
+  selectedModel, 
+  onBack, 
+  images = {
+    logoUrl: 'https://example.com/default-logo.png', 
+    viewerIconUrl: 'https://example.com/default-viewer-icon.png'
+  }
+}: Props) {
 
-export default function ConstellationConfigurator({ selectedModel, onBack }: Props) {
-  
   const [currentStep, setCurrentStep] = useState<"chassis" | "cor" | "pacotes" | "resumo">("chassis");
   const [customColor, setCustomColor] = useState<string>('#0056b3');
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -174,20 +186,28 @@ export default function ConstellationConfigurator({ selectedModel, onBack }: Pro
     pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
   });
 
-  useEffect(() => {
-    setConfig({
-      pintura: opcionaisPintura[0],
-      pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
-    });
-    setCurrentStep("chassis");
-    setChassisLength(5200);
-  }, [selectedModel]);
+  const isPackageAvailableForModel = (packageCode: string, modelId: string): boolean => {
+    const modelSpecificRestrictions: Record<string, string[]> = {
+      'constellation-14-210-4x2': ['HLI', 'PRI'], 
+      'constellation-17-210-4x2-2': ['HLI', 'PRI'], 
+      'constellation-18-210-4x2': [],
+      'constellation-18-260-4x2': [],
+      'constellation-18-320-4x2': [], 
+      
+    };
+
+    const restrictedPackages = modelSpecificRestrictions[modelId] || [];
+    return !restrictedPackages.includes(packageCode);
+  };
 
   const handleSelectPintura = (pintura: Pintura) => {
     setConfig(prev => ({ ...prev, pintura }));
   };
 
   const handleTogglePacote = (codigo: string) => {
+    const pacote = config.pacotes.find(p => p.codigo === codigo);
+    if (!pacote || !pacote.disponivel) return;
+
     setConfig(prev => ({
       ...prev,
       pacotes: prev.pacotes.map(p =>
@@ -196,8 +216,32 @@ export default function ConstellationConfigurator({ selectedModel, onBack }: Pro
     }));
   };
 
+  useEffect(() => {
+    setConfig({
+      pintura: opcionaisPintura[0],
+      pacotes: pacotesConstellation.map(p => ({
+        ...p,
+        selecionado: false,
+        disponivel: isPackageAvailableForModel(p.codigo, selectedModel.id)
+      }))
+    });
+
+    if (selectedModel.chassisConfig && selectedModel.chassisConfig.lengths.length > 0) {
+      setChassisLength(selectedModel.chassisConfig.lengths[0]);
+    } else {
+      setChassisLength(5200);
+    }
+
+    setCurrentStep("chassis");
+  }, [selectedModel]);
+
   const handleChassisLengthChange = (length: number) => {
-    setChassisLength(length);
+    if (selectedModel.chassisConfig && selectedModel.chassisConfig.lengths.includes(length)) {
+      setChassisLength(length);
+    } else {
+      const defaultLength = selectedModel.chassisConfig?.lengths[0] || 5200;
+      setChassisLength(defaultLength);
+    }
   };
 
   const getCategoriaIcon = (categoria: string) => {
@@ -255,62 +299,62 @@ export default function ConstellationConfigurator({ selectedModel, onBack }: Pro
   };
 
   const handleGenerateProposal = async () => {
-  const userData = getUserData();
-  
-  if (!userData || !userData.name || !userData.phone) {
-    alert('Dados do cliente não encontrados. Por favor, faça login novamente.');
-    if (onBack) onBack();
-    return;
-  }
+    const userData = getUserData();
 
-  setIsGeneratingPDF(true);
-
-  try {
-    const truckData = {
-      name: selectedModel.name,
-      variant: selectedModel.variant,
-      engine: selectedModel.engine,
-      power: selectedModel.power,
-      torque: selectedModel.torque,
-      weight: selectedModel.weight,
-      type: selectedModel.type,
-    };
-
-    const configuration = {
-      chassisLength,
-      paint: {
-        nome: config.pintura.nome,
-        colorCode: config.pintura.colorCode,
-      },
-      packages: config.pacotes
-        .filter(p => p.selecionado)
-        .map(p => ({
-          codigo: p.codigo,
-          nome: p.nome,
-          categoria: p.categoria,
-        })),
-    };
-
-    const pdfBlob = await generateProposalPDF(userData, truckData, configuration);
-    const fileName = `Proposta_${selectedModel.name}_${userData.name.replace(/\s+/g, '_')}.pdf`;
-    const downloadSuccess = await safeDownloadPDF(pdfBlob, fileName);
-    
-    if (!downloadSuccess) {
-      const url = URL.createObjectURL(pdfBlob);
-      alert(
-        '📄 PDF gerado!\n\n' +
-        'Para baixar manualmente:\n' +
-        '1. Clique no link abaixo\n' +
-        '2. Use "Salvar como" no menu do navegador\n\n' +
-        `Link: ${url.substring(0, 50)}...`
-      );
-      
-      window.open(url, '_blank');
-      
-      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    if (!userData || !userData.name || !userData.phone) {
+      alert('Dados do cliente não encontrados. Por favor, faça login novamente.');
+      if (onBack) onBack();
+      return;
     }
 
-    const message = `Olá ${userData.name}! 🌟
+    setIsGeneratingPDF(true);
+
+    try {
+      const truckData = {
+        name: selectedModel.name,
+        variant: selectedModel.variant,
+        engine: selectedModel.engine,
+        power: selectedModel.power,
+        torque: selectedModel.torque,
+        weight: selectedModel.weight,
+        type: selectedModel.type,
+      };
+
+      const configuration = {
+        chassisLength,
+        paint: {
+          nome: config.pintura.nome,
+          colorCode: config.pintura.colorCode,
+        },
+        packages: config.pacotes
+          .filter(p => p.selecionado)
+          .map(p => ({
+            codigo: p.codigo,
+            nome: p.nome,
+            categoria: p.categoria,
+          })),
+      };
+
+      const pdfBlob = await generateProposalPDF(userData, truckData, configuration);
+      const fileName = `Proposta_${selectedModel.name}_${userData.name.replace(/\s+/g, '_')}.pdf`;
+      const downloadSuccess = await safeDownloadPDF(pdfBlob, fileName);
+
+      if (!downloadSuccess) {
+        const url = URL.createObjectURL(pdfBlob);
+        alert(
+          '📄 PDF gerado!\n\n' +
+          'Para baixar manualmente:\n' +
+          '1. Clique no link abaixo\n' +
+          '2. Use "Salvar como" no menu do navegador\n\n' +
+          `Link: ${url.substring(0, 50)}...`
+        );
+
+        window.open(url, '_blank');
+
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      }
+
+      const message = `Olá ${userData.name}! 🌟
 
 Acabamos de gerar sua proposta para o *${selectedModel.name}* que você configurou!
 
@@ -326,42 +370,40 @@ Agradecemos sua preferência! 🚚
 
 *Equipe Icavel Caminhões & Ônibus*`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const cleanPhone = userData.phone.replace(/\D/g, '');
-    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+      const encodedMessage = encodeURIComponent(message);
+      const cleanPhone = userData.phone.replace(/\D/g, '');
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
 
-    setTimeout(() => {
-      window.open(whatsappUrl, '_blank');
-    }, 1000);
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 1000);
 
-  } catch (error) {
-    console.error('Erro ao gerar proposta:', error);
-    
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      alert(
-        '⚠️ Dispositivo móvel detectado\n\n' +
-        'Para melhor experiência:\n' +
-        '1. Use o navegador Chrome\n' +
-        '2. Permita pop-ups e downloads\n' +
-        '3. Tente novamente\n\n' +
-        'Se o problema persistir, entre em contato com nosso suporte.'
-      );
-    } else {
-      alert('❌ Erro ao gerar proposta. Por favor, tente novamente.');
+    } catch (error) {
+      console.error('Erro ao gerar proposta:', error);
+
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        alert(
+          '⚠️ Dispositivo móvel detectado\n\n' +
+          'Para melhor experiência:\n' +
+          '1. Use o navegador Chrome\n' +
+          '2. Permita pop-ups e downloads\n' +
+          '3. Tente novamente\n\n' +
+          'Se o problema persistir, entre em contato com nosso suporte.'
+        );
+      } else {
+        alert('❌ Erro ao gerar proposta. Por favor, tente novamente.');
+      }
+    } finally {
+      setIsGeneratingPDF(false);
     }
-  } finally {
-    setIsGeneratingPDF(false);
-  }
-};
+  };
 
   const ColorPickerModal = () => (
     <div className="color-picker-modal-overlay" onClick={() => setShowColorPicker(false)}>
       <div className="color-picker-modal" onClick={(e) => e.stopPropagation()}>
         <div className="color-picker-header">
-          <h3>Cor Personalizada</h3>
-          <button onClick={() => setShowColorPicker(false)} className="close-btn">×</button>
         </div>
         <div className="color-picker-content">
           <div className="current-color-display">
@@ -429,23 +471,24 @@ Agradecemos sua preferência! 🚚
     </div>
   );
 
-  const renderControls = () => {
-    switch (currentStep) {
-      case "chassis":
-        return (
-          <div className="step-container">
-            <div className="section-header">
-            </div>
-
-            <div className="step-content">
-              <ChassisLengthSection 
-                selectedLength={chassisLength}
-                onLengthChange={handleChassisLengthChange}
-              />
-            </div>
+const renderControls = () => {
+  switch (currentStep) {
+    case "chassis":
+      return (
+        <div className="step-container">
+          <div className="step-content">
+            <ChassisLengthSection
+              selectedLength={chassisLength}
+              onLengthChange={handleChassisLengthChange}
+              selectedTruckModel={{
+                name: selectedModel.name,
+                chassisConfig: selectedModel.chassisConfig
+              }}
+            />
           </div>
-        );
-
+        </div>
+      );
+      
       case "cor":
         return (
           <div className="step-container">
@@ -489,7 +532,6 @@ Agradecemos sua preferência! 🚚
                 ))}
               </div>
               <div className="text-center mt-6">
-              
               </div>
             </div>
           </div>
@@ -501,9 +543,12 @@ Agradecemos sua preferência! 🚚
             <div className="section-header">
               <h3 className="section-title">
                 <Package size={20} className="section-icon" />
-                Pacotes Opcionais
+                Pacotes Opcionais - {selectedModel.name}
               </h3>
-              <p className="section-subtitle">Selecione os pacotes para seu {selectedModel.name}.</p>
+              <p className="section-subtitle">
+                Selecione os pacotes para seu {selectedModel.name}.
+                {config.pacotes.some(p => !p.disponivel) && " Alguns pacotes podem não estar disponíveis para este modelo."}
+              </p>
             </div>
 
             <div className="step-content">
@@ -514,9 +559,15 @@ Agradecemos sua preferência! 🚚
                   return (
                     <div
                       key={pacote.codigo}
-                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''}`}
-                      onClick={() => handleTogglePacote(pacote.codigo)}
+                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''} ${!pacote.disponivel ? 'unavailable' : ''}`}
+                      onClick={() => pacote.disponivel && handleTogglePacote(pacote.codigo)}
                     >
+                      {!pacote.disponivel && (
+                        <div className="unavailable-overlay">
+                          <span>Indisponível para este modelo</span>
+                        </div>
+                      )}
+
                       <div className="pacote-header">
                         <div className="pacote-cabecalho">
                           <div className="pacote-icon-container">
@@ -530,7 +581,7 @@ Agradecemos sua preferência! 🚚
                               <span>{pacote.categoria.charAt(0).toUpperCase() + pacote.categoria.slice(1)}</span>
                             </div>
                           </div>
-                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''}`}>
+                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''} ${!pacote.disponivel ? 'disabled' : ''}`}>
                             {pacote.selecionado && <Check size={14} />}
                           </div>
                         </div>
@@ -579,7 +630,7 @@ Agradecemos sua preferência! 🚚
             <div className="section-header">
               <h3 className="section-title">
                 <FileText size={20} className="section-icon" />
-                Resumo da Configuração
+                Resumo da Configuração - {selectedModel.name}
               </h3>
               <p className="section-subtitle">
                 Configuração final do seu {selectedModel.name}. Clique em "Gerar Proposta" para enviar por WhatsApp.
@@ -691,35 +742,7 @@ Agradecemos sua preferência! 🚚
               </div>
 
               <div className="proposal-actions">
-                <button
-                  onClick={handleGenerateProposal}
-                  disabled={isGeneratingPDF}
-                  className="btn-primary btn-generar-proposta"
-                  style={{
-                    backgroundColor: '#25D366',
-                    padding: '12px 24px',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '10px',
-                    margin: '20px auto',
-                    minWidth: '300px'
-                  }}
-                >
-                  {isGeneratingPDF ? (
-                    <>
-                      <Loader2 className="spinner" size={20} />
-                      Gerando PDF...
-                    </>
-                  ) : (
-                    <>
-                      <MessageCircle size={20} />
-                      <span>Gerar Proposta e Enviar WhatsApp</span>
-                    </>
-                  )}
-                </button>
+                
               </div>
             </div>
           </div>
@@ -740,19 +763,12 @@ Agradecemos sua preferência! 🚚
                 <div className="separator"></div>
                 <span className="brand-subtitle-small">Caminhões e Ônibus</span>
               </div>
-              <h1 className="model-title">CONSTELLATION</h1>
-              <p className="model-subtitle">{selectedModel.name}</p>
+           <h1 className="model-title-premium">CONSTELLATION</h1>
+           <p className="model-subtitle">{selectedModel.name}</p>
             </div>
 
             <div className="viewer-toggle-container">
-              <button
-                className={`viewer-toggle-btn ${viewerMode === "360" ? "active" : ""}`}
-                onClick={() => setViewerMode("360")}
-                title="Visualizador 360°"
-              >
-                <ImageIcon size={18} />
-                <span>360°</span>
-              </button>
+              
             </div>
           </header>
 
@@ -829,7 +845,7 @@ Agradecemos sua preferência! 🚚
                   onClick={handleGenerateProposal}
                   disabled={isGeneratingPDF}
                   className="btn-primary btn-sm btn-generar-proposta"
-                  style={{ 
+                  style={{
                     backgroundColor: '#25D366',
                     minWidth: '200px',
                     display: 'flex',
@@ -868,17 +884,20 @@ Agradecemos sua preferência! 🚚
                 </button>
               )}
 
-              <button className="btn-secondary btn-sm">
-                <Share2 size={14} className="btn-icon" /> Compartilhar
-              </button>
+              
               <button
                 onClick={() => {
                   setConfig({
                     pintura: opcionaisPintura[0],
-                    pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
+                    pacotes: pacotesConstellation.map(p => ({
+                      ...p,
+                      selecionado: false,
+                      disponivel: isPackageAvailableForModel(p.codigo, selectedModel.id)
+                    }))
                   });
                   setCurrentStep("chassis");
-                  setChassisLength(5200);
+                  const defaultLength = selectedModel.chassisConfig?.lengths[0] || 5200;
+                  setChassisLength(defaultLength);
                 }}
                 className="btn-outline btn-sm"
               >
