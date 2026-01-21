@@ -1,5 +1,7 @@
+/* src/components/Meteor/MeteorConfigurator.css */
+
 :root {
-  --meteor-orange: #ea580c;
+  --meteor-orange: #000000;
   --meteor-orange-light: #fb923c;
   --meteor-orange-dark: #c2410c;
   --gray-50: #f9fafb;
@@ -9,9 +11,9 @@
   --gray-400: #9ca3af;
   --gray-500: #6b7280;
   --gray-600: #4b5563;
-  --gray-700: #e2eaf8;
-  --gray-800: #bad7ff;
-  --gray-900: #b5ccff;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
 }
 
 .meteor-configurator {
@@ -50,7 +52,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.5rem !important;
   z-index: 20;
   display: flex;
   justify-content: space-between;
@@ -89,20 +91,24 @@
 }
 
 .model-title {
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--meteor-orange);
-  letter-spacing: -0.025em;
-  line-height: 1;
-  margin: 0.25rem 0;
+  font-size: 2.5rem !important;
+  font-weight: 900 !important;
+  color: #1e40af !important; 
+  letter-spacing: -0.025em !important;
+  line-height: 1.2 !important;
+  margin: 0.25rem 0 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .model-subtitle {
-  font-size: 0.875rem;
-  color: var(--meteor-orange-light);
-  font-weight: 500;
-  margin: 0;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  color: rgba(0, 0, 0, 0.85) !important; 
+  margin: 0 !important;
+  letter-spacing: 0.05em !important;
 }
+
+
 
 .vehicle-container {
   width: 100%;
@@ -906,7 +912,6 @@
   height: 25px;
 }
 
-
 .action-buttons-sm .btn-primary,
 .action-buttons-sm .btn-secondary,
 .action-buttons-sm .btn-outline {
@@ -941,7 +946,7 @@
   }
   
   .model-title {
-    font-size: 2.2rem;
+    font-size: 2.2rem !important;
   }
   
   .vehicle-image {
@@ -968,7 +973,7 @@
     min-width: auto;
     height: auto;
     border-left: none;
-    border-top: 1px solid rgba(234, 88, 12, 0.1);
+    border-top: 1px solid rgba(233, 84, 3, 0.1);
   }
   
   .config-content {
@@ -977,7 +982,7 @@
   }
   
   .model-title {
-    font-size: 2rem;
+    font-size: 2rem !important;
   }
   
   .vehicle-container {
@@ -1027,7 +1032,7 @@
   }
   
   .model-title {
-    font-size: 1.8rem;
+    font-size: 1.8rem !important;
   }
   
   .vehicle-image {
@@ -1076,7 +1081,7 @@
   }
   
   .model-title {
-    font-size: 1.6rem;
+    font-size: 1.6rem !important;
   }
   
   .vehicle-image {

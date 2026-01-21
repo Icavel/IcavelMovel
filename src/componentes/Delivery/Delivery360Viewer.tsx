@@ -125,6 +125,26 @@ const DEFAULT_IMAGE_SEQUENCE = DELIVERY_IMAGES_BY_COLOR["Azul Biscay"] || [
   "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr02X2rcFqdKFseCcpqzHrUtMBAR9VumY4aWDIh"
 ];
 
+const imageCache: Map<string, HTMLImageElement[]> = new Map();
+const preloadImages = (urls: string[], colorKey: string) => {
+  if (imageCache.has(colorKey)) {
+    return;
+  }
+
+  imageCache.set(colorKey, new Array(urls.length));
+
+  urls.forEach((src, index) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      const cache = imageCache.get(colorKey);
+      if (cache) {
+        cache[index] = img;
+      }
+    };
+  });
+};
+
 const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({ 
   color = "Azul Biscay",  
   model = "9-170",
@@ -136,6 +156,7 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null); 
 
   const getImageSequence = () => {
     if (!color) return DEFAULT_IMAGE_SEQUENCE;
@@ -165,12 +186,26 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
     if (Array.isArray(sequence) && sequence.length > 0) {
       setImageSequence(sequence);
       setTotalFrames(sequence.length);
-      console.log(`Sequência carregada: ${sequence.length} imagens para cor: ${color}`);
+      
+      const colorKey = color.trim();
+      preloadImages(sequence, colorKey);
     } else {
       setImageSequence(DEFAULT_IMAGE_SEQUENCE);
       setTotalFrames(DEFAULT_IMAGE_SEQUENCE.length);
+      preloadImages(DEFAULT_IMAGE_SEQUENCE, "Azul Biscay");
     }
   }, [color]);
+
+  const getCurrentImageUrl = () => {
+    const colorKey = color.trim();
+    const cachedImages = imageCache.get(colorKey);
+    
+    if (cachedImages && cachedImages[currentFrame]) {
+      return cachedImages[currentFrame].src;
+    }
+    
+    return imageSequence[currentFrame] || imageSequence[0];
+  };
 
   const rotateTo = (direction: 'left' | 'right') => {
     const increment = direction === 'left' ? -1 : 1;
@@ -229,7 +264,14 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
   }, [color]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setCurrentFrame(0);
+    setShowSwipeHint(true);
+    
+    if (autoRotateRef.current) {
+      clearInterval(autoRotateRef.current);
+    }
+    
+    autoRotateRef.current = setInterval(() => {
       if (!isDragging && totalFrames > 0) {
         rotateTo('right');
       }
@@ -240,10 +282,12 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
     }, 5000);
 
     return () => {
-      clearInterval(interval);
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
       clearTimeout(hintTimer);
     };
-  }, [currentFrame, isDragging, color, totalFrames]);
+  }, [color, isDragging, totalFrames]);
 
   if (!imageSequence || !Array.isArray(imageSequence) || imageSequence.length === 0) {
     console.error("Erro: imageSequence não é um array válido", imageSequence);
@@ -255,7 +299,7 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
     );
   }
 
-  const currentImage = imageSequence[currentFrame] || imageSequence[0];
+  const currentImage = getCurrentImageUrl(); 
 
   return (
     <div 
@@ -299,7 +343,9 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
                 pointerEvents: 'none',
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                opacity: 1, 
+                transition: 'opacity 0.3s ease' 
               }}
               onError={(e) => {
                 console.error("Erro ao carregar imagem:", currentImage);
@@ -309,7 +355,10 @@ const Delivery360Viewer: React.FC<Delivery360ViewerProps> = ({
                 }
               }}
               onLoad={() => {
-                console.log("Imagem carregada:", currentImage);
+                const cachedImages = imageCache.get(color.trim());
+                if (cachedImages && cachedImages[currentFrame]) {
+                  imageRef.current?.style.setProperty('opacity', '1');
+                }
               }}
             />
           </div>

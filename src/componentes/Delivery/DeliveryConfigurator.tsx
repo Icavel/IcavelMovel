@@ -80,11 +80,10 @@ interface UserData {
   acceptsMarketing: boolean;
 }
 
-// Configurações específicas para cada modelo
 const deliveryModelsConfig = {
   "delivery-express": {
     name: "Delivery Express",
-    chassisLengths: [3000, 3100, 3200, 3300, 3400, 3500, 3600],
+    chassisLengths: [3000, 3600],
     minLength: 3000,
     maxLength: 3600,
     step: 100,
@@ -248,7 +247,6 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
     chassisLength: 4000
   });
 
-  // Obtém configurações específicas do modelo
   const getModelConfig = () => {
     if (!selectedModel?.id) {
       return {
@@ -256,7 +254,8 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
         minLength: 4000,
         maxLength: 6000,
         step: 100,
-        defaultLength: 4500
+        defaultLength: 4500,
+        isSingleOption: false
       };
     }
 
@@ -269,17 +268,18 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
         minLength: modelConfig.minLength,
         maxLength: modelConfig.maxLength,
         step: modelConfig.step,
-        defaultLength: modelConfig.defaultLength
+        defaultLength: modelConfig.defaultLength,
+        isSingleOption: modelConfig.chassisLengths.length === 1
       };
     }
 
-    // Configuração padrão para modelos não especificados
     return {
       lengths: selectedModel?.chassisConfig?.lengths || [4000, 4500, 5000, 5500, 6000],
       minLength: selectedModel?.chassisConfig?.minLength || 4000,
       maxLength: selectedModel?.chassisConfig?.maxLength || 6000,
       step: selectedModel?.chassisConfig?.step || 100,
-      defaultLength: selectedModel?.chassisConfig?.recommendedLength || 4500
+      defaultLength: selectedModel?.chassisConfig?.recommendedLength || 4500,
+      isSingleOption: (selectedModel?.chassisConfig?.lengths?.length || 0) === 1
     };
   };
 
@@ -313,12 +313,10 @@ export default function DeliveryConfigurator({ selectedModel }: Props) {
   const handleChassisLengthChange = (length: number) => {
     const modelConfig = getModelConfig();
 
-    // Verifica se o comprimento está dentro dos limites permitidos
     if (length >= modelConfig.minLength && length <= modelConfig.maxLength) {
       setChassisLength(length);
       setConfig(prev => ({ ...prev, chassisLength: length }));
     } else {
-      // Se fora dos limites, ajusta para o mais próximo
       const clampedLength = Math.max(modelConfig.minLength, Math.min(modelConfig.maxLength, length));
       setChassisLength(clampedLength);
       setConfig(prev => ({ ...prev, chassisLength: clampedLength }));
@@ -478,9 +476,14 @@ Agradecemos sua preferência! 🚚
                 selectedTruckModel={{
                   id: selectedModel?.id || '',
                   name: selectedModel?.name || 'Delivery',
+                  variant: selectedModel?.variant || '',
                   chassisConfig: {
                     lengths: modelConfig.lengths,
-                    labels: modelConfig.lengths.map(l => `${(l / 1000).toFixed(3).replace('.', ',')}m`)
+                    labels: modelConfig.lengths.map(l => `${(l / 1000).toFixed(3).replace('.', ',')}m`),
+                    minLength: modelConfig.minLength,
+                    maxLength: modelConfig.maxLength,
+                    step: modelConfig.step,
+                    isSingleOption: modelConfig.isSingleOption
                   }
                 }}
               />
@@ -764,6 +767,21 @@ Agradecemos sua preferência! 🚚
     <div className="delivery-configurator">
       <div className="configurator-content">
         <div className="viewer-container">
+
+          <header className="viewer-header">
+            <div className="brand-section">
+              <div className="brand-top">
+                <div className="vw-logo-small">W</div>
+                <div className="separator"></div>
+                <span className="brand-subtitle-small">Caminhões e Ônibus</span>
+              </div>
+              <h1 className="model-title">DELIVERY</h1>
+              <p className="model-subtitle">
+                {selectedModel ? selectedModel.name : 'Delivery 6.170'}
+              </p>
+            </div>
+          </header>
+
           <div className="vehicle-container">
             <div className="vehicle-viewer-wrapper">
               <Delivery360Viewer

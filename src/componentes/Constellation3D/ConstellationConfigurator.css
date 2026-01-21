@@ -1,220 +1,392 @@
-/* Container para a imagem da logo */
-.brand-logo-container {
-  width: 180px; /* Ajuste conforme necessário */
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
+/* src/components/Constellation/ConstellationConfigurator.css */
 
-.brand-logo-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: left center;
-}
-
-/* Fallback quando a imagem não carrega */
-.brand-logo-fallback {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-}
-
-.vw-logo-small {
-  width: 24px;
-  height: 24px;
-  background: #1a365d;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.separator {
-  width: 1px;
-  height: 16px;
-  background: #ddd;
-}
-
-.brand-subtitle-small {
-  font-size: 0.8rem;
-  color: #666;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* Container para a imagem do visualizador */
-.viewer-icon-container {
-  width: 60px; /* Ajuste conforme necessário */
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.viewer-icon-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.viewer-icon-image:hover {
-  transform: scale(1.1);
-}
-
-/* Se quiser manter o botão 360 como fallback */
-.viewer-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 12px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.viewer-toggle-btn.active {
-  background: #ff7b00;
-  color: white;
-  border-color: #ff7b00;
-}
-
-/* Layout responsivo para o header */
 .viewer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 15px 20px;
-  background: white;
-  border-radius: 12px 12px 0 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem !important; 
 }
 
-.brand-section {
-  flex: 1;
-}
-
-.viewer-toggle-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 80px;
-}
-
-/* Ajuste do modelo título e subtítulo */
-.model-title {
-  font-size: 2.8rem;
+.model-title-premium {
+  font-size: 2.5rem !important; 
   font-weight: 900;
-  letter-spacing: 2px;
-  margin: 5px 0;
-  background: linear-gradient(135deg, #ff7b00 0%, #ff5500 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  display: inline-block;
+  color: rgb(0, 2, 99);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin: 0.25rem 0 !important; 
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .model-subtitle {
-  color: #2c3e50;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 8px;
-  letter-spacing: 0.8px;
-  position: relative;
-  padding-left: 25px;
-  display: inline-block;
+  font-size: 1rem !important; 
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0;
+  letter-spacing: 0.05em;
 }
 
-.model-subtitle::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, #ff7b00, #ff5500);
-  border-radius: 1px;
-  opacity: 0.8;
+.current-model-info {
+  bottom: 1rem !important;
+  left: 1rem !important;
+  right: 1rem !important;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .viewer-header {
+.current-model-card {
+  padding: 0.75rem 1rem !important; 
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+}
+
+.model-specs-overview {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 0.5rem !important; 
+  margin-bottom: 0.5rem !important;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem !important; 
+  padding: 0.5rem !important;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  text-align: center;
+  min-width: 0; 
+}
+
+.spec-item svg {
+  width: 16px !important; 
+  height: 16px !important;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.spec-item span {
+  font-size: 0.75rem !important; 
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.current-color-indicator {
+  padding: 0.5rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.color-preview-small {
+  width: 20px !important; 
+  height: 20px !important;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.current-color-indicator span {
+  font-size: 0.75rem !important; 
+  color: white;
+  font-weight: 500;
+}
+
+.tabs-container {
+  padding-top: 0.75rem !important; 
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.tab-button {
+  padding: 0.75rem 0.5rem !important;
+}
+
+.tab-content {
+  gap: 0.25rem !important; 
+}
+
+.tab-icon {
+  width: 18px !important; 
+  height: 18px !important;
+}
+
+.tab-label {
+  font-size: 0.7rem !important; 
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.config-content {
+  padding: 1rem !important; 
+}
+
+.section-header {
+  margin-bottom: 1rem !important; 
+}
+
+.section-title {
+  font-size: 1rem !important; 
+  margin-bottom: 0.125rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem !important; 
+}
+
+.section-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.section-subtitle {
+  font-size: 0.8rem !important; 
+}
+
+.constellation-configurator .chassis-container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.constellation-configurator .chassis-header {
+  padding: 1rem !important; 
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: white;
+}
+
+.constellation-configurator .model-badge {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.375rem 0.75rem !important; 
+  border-radius: 6px;
+  font-size: 0.8rem !important; 
+}
+
+.constellation-configurator .chassis-main-title {
+  font-size: 1.25rem !important; 
+  margin: 0 !important;
+  color: white !important;
+}
+
+.constellation-configurator .chassis-subtitle {
+  font-size: 0.75rem !important; 
+  color: rgba(255, 255, 255, 0.9) !important;
+  margin: 0 !important;
+}
+
+.constellation-configurator .info-card {
+  padding: 0.75rem !important;
+  margin: 0.75rem !important;
+}
+
+.constellation-configurator .info-header {
+  margin-bottom: 0.75rem !important; 
+}
+
+.constellation-configurator .info-title {
+  font-size: 0.8rem !important; 
+}
+
+.constellation-configurator .specs-display {
+  padding: 1rem !important; 
+}
+
+.constellation-configurator .specs-row {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 0.75rem !important; 
+}
+
+.constellation-configurator .spec-divider {
+  display: none !important; 
+}
+
+.constellation-configurator .spec-item {
+  min-width: 0 !important;
+  padding: 0.5rem !important;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.constellation-configurator .spec-label {
+  font-size: 0.7rem !important; 
+  margin-bottom: 0.25rem;
+}
+
+.constellation-configurator .spec-value {
+  font-size: 1rem !important; 
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.constellation-configurator .spec-value-secondary {
+  font-size: 0.65rem !important; 
+}
+
+.constellation-configurator .quick-select-grid {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important; 
+  gap: 0.75rem !important; 
+}
+
+.constellation-configurator .quick-select-button {
+  padding: 1rem !important; 
+}
+
+.constellation-configurator .quick-select-label {
+  font-size: 1rem !important; 
+}
+
+.constellation-configurator .quick-select-type {
+  font-size: 0.75rem !important; 
+}
+
+.constellation-configurator .slider-card {
+  padding: 1rem !important;
+}
+
+.constellation-configurator .slider-header {
+  margin-bottom: 0.75rem !important; 
+}
+
+.constellation-configurator .slider-label {
+  font-size: 0.8rem !important; 
+}
+
+.constellation-configurator .slider-value {
+  font-size: 1rem !important; 
+}
+
+.constellation-configurator .slider-value-mm {
+  font-size: 0.7rem !important; 
+}
+
+.constellation-configurator .applications-card {
+  padding: 1rem !important; 
+}
+
+.constellation-configurator .applications-header {
+  margin-bottom: 0.75rem !important; 
+}
+
+.constellation-configurator .applications-title {
+  font-size: 0.8rem !important; 
+}
+
+.constellation-configurator .app-tag {
+  padding: 0.375rem 0.625rem !important; 
+  font-size: 0.7rem !important; 
+}
+
+.config-footer {
+  padding: 1rem !important; 
+}
+
+.action-buttons-sm .btn-primary,
+.action-buttons-sm .btn-secondary,
+.action-buttons-sm .btn-outline {
+  padding: 0.75rem !important; 
+  font-size: 0.7rem !important; 
+}
+
+.action-buttons-sm .btn-icon {
+  width: 20px !important; 
+  height: 20px !important;
+}
+
+@media (max-width: 1024px) {
+  .configurator-content {
     flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-    padding: 12px;
+    height: auto;
+    min-height: 100vh;
   }
   
-  .brand-logo-container {
-    width: 140px;
-    height: 35px;
+  .viewer-container {
+    flex: 0 0 40vh;
+    width: 100%;
   }
   
-  .viewer-toggle-container {
-    justify-content: flex-start;
+  .config-panel {
+    flex: 1;
+    width: 100%;
     min-width: auto;
+    height: 60vh;
+    border-left: none;
+    border-top: 1px solid rgba(0, 86, 179, 0.1);
   }
   
-  .viewer-icon-container {
-    width: 50px;
-    height: 35px;
+  .config-content {
+    max-height: calc(60vh - 120px);
+    padding: 1rem;
   }
   
-  .model-title {
-    font-size: 2rem;
-    letter-spacing: 1px;
-  }
-  
-  .model-subtitle {
-    font-size: 0.95rem;
-    padding-left: 20px;
-    margin-top: 5px;
-  }
-  
-  .model-subtitle::before {
-    width: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-logo-container {
-    width: 120px;
-    height: 30px;
-  }
-  
-  .model-title {
-    font-size: 1.8rem;
+  .model-title-premium {
+    font-size: 2rem !important;
   }
   
   .model-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.875rem !important;
+  }
+  
+  .tabs-container {
+    overflow-x: auto;
+    justify-content: center;
+  }
+  
+  .tab-button {
+    min-width: 80px;
   }
 }
 
-.brand-logo-container.loading,
-.viewer-icon-container.loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-  border-radius: 4px;
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@media (max-width: 768px) {
+  .viewer-container {
+    flex: 0 0 35vh;
+  }
+  
+  .config-panel {
+    height: 65vh;
+  }
+  
+  .config-content {
+    max-height: calc(65vh - 120px);
+    padding: 0.75rem;
+  }
+  
+  .model-title-premium {
+    font-size: 1.75rem !important;
+  }
+  
+  .current-model-card {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .model-specs-overview {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .spec-item {
+    min-width: 80px;
+  }
+  
+  .constellation-configurator .specs-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .quick-select-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .action-buttons {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .btn-primary {
+    grid-column: span 1;
+  }
 }

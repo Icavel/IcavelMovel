@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Ruler, Check, Info, Edit2, Truck, Loader, AlertCircle } from "lucide-react";
 import "./ChassisLengthSection.css";
-import { ChassisTruckModel } from '../../types/chassisTypes';
+import { ChassisTruckModel, ChassisConfig } from '../../types/chassisTypes';
 
 interface ChassisLengthSectionProps {
   selectedLength: number;
@@ -68,7 +68,7 @@ const validateCustomLength = (length: number, min: number, max: number): boolean
 
 const getChassisType = (modelName: string, length: number): string => {
   const model = modelName.toLowerCase();
-  
+
   if (model.includes('delivery')) {
     if (model.includes('express')) return "Compacto Urbano";
     if (model.includes('6.170') || model.includes('11.80 4x4')) return "Configuração Única";
@@ -90,7 +90,7 @@ const getChassisType = (modelName: string, length: number): string => {
     if (length < 5500) return "Médio";
     return "Longo";
   }
-  
+
   if (length < 4000) return "Compacto";
   if (length < 5000) return "Curto";
   if (length < 6000) return "Médio";
@@ -100,15 +100,15 @@ const getChassisType = (modelName: string, length: number): string => {
 
 const getChassisApplications = (modelName: string, length: number): string[] => {
   const model = modelName.toLowerCase();
-  const category = model.includes('delivery') ? 'delivery' : 
-                   model.includes('constellation') ? 'constellation' : 
-                   model.includes('meteor') ? 'meteor' : 'generic';
-  
+  const category = model.includes('delivery') ? 'delivery' :
+    model.includes('constellation') ? 'constellation' :
+      model.includes('meteor') ? 'meteor' : 'generic';
+
   const fallback = fallbackConfigs[category as keyof typeof fallbackConfigs];
   if (fallback && fallback.applications[length as keyof typeof fallback.applications]) {
     return fallback.applications[length as keyof typeof fallback.applications];
   }
-  
+
   if (length < 4000) return ["Urbano", "Distribuição", "Baú"];
   if (length < 5000) return ["Regional", "Carga Seca", "Frigorífico"];
   if (length < 6000) return ["Longa distância", "Tanque", "Sider"];
@@ -117,9 +117,9 @@ const getChassisApplications = (modelName: string, length: number): string[] => 
 
 const getAxleCount = (modelName: string, length: number): number => {
   const model = modelName.toLowerCase();
-  
+
   if (model.includes('delivery')) {
-    return 2; 
+    return 2;
   } else if (model.includes('constellation')) {
     if (length < 4500) return 2;
     if (length < 6000) return 3;
@@ -130,21 +130,22 @@ const getAxleCount = (modelName: string, length: number): number => {
     if (length < 6500) return 3;
     return 4;
   }
-  
+
   if (length < 4500) return 2;
   if (length < 6000) return 3;
   if (length < 7500) return 4;
   return 5;
 };
 
-export default function ChassisLengthSection({ 
-  selectedLength, 
+export default function ChassisLengthSection({
+  selectedLength,
   onLengthChange,
-  selectedTruckModel
+  selectedTruckModel = null
 }: ChassisLengthSectionProps) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customLength, setCustomLength] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const chassisOptions = useMemo(() => {
     if (!selectedTruckModel || !selectedTruckModel.chassisConfig) {
       console.warn('Modelo sem configuração de chassi:', selectedTruckModel?.name);
@@ -152,11 +153,11 @@ export default function ChassisLengthSection({
     }
 
     const { chassisConfig } = selectedTruckModel;
-    
+
     return chassisConfig.lengths.map((length, index) => {
       const label = chassisConfig.labels?.[index] || formatLength(length, 3);
-      const image = chassisConfig.images?.[index] || '';
-      
+      const image = chassisConfig.images?.[length] || '';
+
       return {
         length,
         label,
@@ -182,8 +183,16 @@ export default function ChassisLengthSection({
         max: Math.max(...lengths)
       };
     }
+
+    if (selectedTruckModel?.chassisConfig) {
+      return {
+        min: selectedTruckModel.chassisConfig.minLength || 3000,
+        max: selectedTruckModel.chassisConfig.maxLength || 6000
+      };
+    }
+
     return { min: 3000, max: 12000 };
-  }, [chassisOptions]);
+  }, [chassisOptions, selectedTruckModel]);
 
   const selectedOption = useMemo(() => {
     return chassisOptions.find(opt => opt.length === selectedLength);
@@ -197,7 +206,7 @@ export default function ChassisLengthSection({
   const handleLengthChange = (length: number) => {
     setIsLoading(true);
     onLengthChange(length);
-    
+
     setTimeout(() => {
       setIsLoading(false);
     }, LOADING_DELAY);
@@ -218,7 +227,7 @@ export default function ChassisLengthSection({
     return ((length - min) / (max - min)) * 100;
   };
 
-  const isSingleOption = chassisOptions.length === 1;
+  const isSingleOption = selectedTruckModel?.chassisConfig?.isSingleOption || chassisOptions.length === 1;
 
   if (chassisOptions.length === 0) {
     return (
@@ -231,14 +240,14 @@ export default function ChassisLengthSection({
           <h2 className="chassis-main-title">Comprimento do Chassi</h2>
           <p className="chassis-subtitle">Configurações técnicas não disponíveis</p>
         </div>
-        
+
         <div className="empty-state-card">
           <div className="empty-state-icon">
             <AlertCircle size={32} />
           </div>
           <h4>Configuração em desenvolvimento</h4>
           <p>
-            As especificações técnicas para <strong>{selectedTruckModel?.name}</strong> 
+            As especificações técnicas para <strong>{selectedTruckModel?.name}</strong>
             estão sendo finalizadas. Entre em contato com nossa equipe para mais informações.
           </p>
         </div>
@@ -280,14 +289,13 @@ export default function ChassisLengthSection({
                 ))}
               </div>
               <p className="single-option-note">
-                Esta é a única configuração disponível para este modelo. 
+                Esta é a única configuração disponível para este modelo.
                 Clique em "Continuar" para prosseguir.
               </p>
             </div>
           </div>
         </div>
       ) : (
- 
         <>
           <div className="quick-select-section">
             <div className="quick-select-grid">
@@ -310,47 +318,7 @@ export default function ChassisLengthSection({
             </div>
           </div>
 
-          <div className="info-card">
-            <div className="info-header">
-              <Info size={18} />
-              <span className="info-title">Configuração selecionada</span>
-            </div>
-            
-            {isLoading && (
-              <div className="loading-indicator">
-                <Loader size={16} className="spinner" />
-                <span>Atualizando configuração...</span>
-              </div>
-            )}
-            
-            {!isLoading && selectedOption && (
-              <div className="specs-display">
-                <div className="specs-row">
-                  <div className="spec-item">
-                    <span className="spec-label">Comprimento</span>
-                    <span className="spec-value">
-                      {formatLength(selectedLength, 3)}
-                      <span className="spec-value-secondary">({selectedLength.toLocaleString()}mm)</span>
-                    </span>
-                  </div>
-                  <div className="spec-divider" />
-                  <div className="spec-item">
-                    <span className="spec-label">Configuração</span>
-                    <span className="spec-value">{selectedOption.type}</span>
-                  </div>
-                  {axleCount > 0 && (
-                    <>
-                      <div className="spec-divider" />
-                      <div className="spec-item">
-                        <span className="spec-label">Eixos</span>
-                        <span className="spec-value">{axleCount}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+         
 
           {chassisOptions.length > 1 && (
             <div className="slider-card">
@@ -361,24 +329,24 @@ export default function ChassisLengthSection({
                   <span className="slider-value-mm">{selectedLength.toLocaleString()}mm</span>
                 </div>
               </div>
-              
+
               <div className="slider-track">
                 <input
                   type="range"
                   min={min}
                   max={max}
-                  step="100"
+                  step={selectedTruckModel?.chassisConfig?.step || CHASSIS_STEP}
                   value={selectedLength}
                   onChange={(e) => handleLengthChange(Number(e.target.value))}
                   className="slider-input"
                   disabled={isLoading}
                 />
-                <div 
+                <div
                   className="slider-fill"
                   style={{ width: `${getPercentage(selectedLength)}%` }}
                 />
               </div>
-              
+
               <div className="slider-markers">
                 {chassisOptions.map((option) => (
                   <button
@@ -413,7 +381,7 @@ export default function ChassisLengthSection({
 
           <div className="custom-section">
             {!showCustomInput ? (
-              <button 
+              <button
                 onClick={() => setShowCustomInput(true)}
                 className="custom-button"
                 disabled={isLoading}
@@ -425,7 +393,7 @@ export default function ChassisLengthSection({
               <div className="custom-input-card">
                 <div className="custom-input-header">
                   <span className="custom-input-title">Comprimento personalizado</span>
-                  <button 
+                  <button
                     onClick={() => {
                       setShowCustomInput(false);
                       setCustomLength("");
@@ -449,7 +417,7 @@ export default function ChassisLengthSection({
                   />
                   <span className="input-unit">mm</span>
                 </div>
-                <button 
+                <button
                   onClick={handleCustomLength}
                   disabled={!customLength || isLoading}
                   className="apply-button"
