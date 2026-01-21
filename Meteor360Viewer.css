@@ -190,6 +190,6 @@
     font-size: 13px;
     padding: 8px 16px;
     max-width: 220px;
-    white-space: normal; /* Permite quebra de linha */
+    white-space: normal; 
   }
 }

@@ -80,6 +80,11 @@ interface UserData {
   acceptsMarketing: boolean;
 }
 
+const UPLOADTHING_IMAGES = {
+  LOGO: "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr03T9lgKNcujJtS6L1nNTlORwF5girxpQAhDe4",
+  TEXT_BRAND: "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0nskeXaZqjhFbPT5JVCkQ1myXAniRBrY3a2xc"
+};
+
 const deliveryModelsConfig = {
   "delivery-express": {
     name: "Delivery Express",
@@ -769,18 +774,55 @@ Agradecemos sua preferência! 🚚
         <div className="viewer-container">
 
           <header className="viewer-header">
-            <div className="brand-section">
-              <div className="brand-top">
-                <div className="vw-logo-small">W</div>
-                <div className="separator"></div>
-                <span className="brand-subtitle-small">Caminhões e Ônibus</span>
-              </div>
-              <h1 className="model-title">DELIVERY</h1>
-              <p className="model-subtitle">
-                {selectedModel ? selectedModel.name : 'Delivery 6.170'}
-              </p>
-            </div>
-          </header>
+  <div className="brand-section">
+    <div className="brand-top" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <img 
+        src={UPLOADTHING_IMAGES.LOGO} 
+        alt="Volkswagen" 
+        style={{
+          width: '50px',  
+          height: '60px',
+          objectFit: 'contain',
+          display: 'block'
+        }}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.style.display = 'none';
+          document.querySelector('.brand-top')!.innerHTML += 
+            '<div style="width: 80px; height: 80px; background: #1F4E79; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900;">VW</div>';
+        }}
+      />
+      
+      
+      
+      <img 
+        src={UPLOADTHING_IMAGES.TEXT_BRAND} 
+        alt="Caminhões e Ônibus" 
+        style={{
+          height: '40px', 
+          width: 'auto',
+          maxWidth: '500px', 
+          objectFit: 'contain',
+          display: 'block'
+        }}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.style.display = 'none';
+          // Fallback simples
+          document.querySelector('.brand-top')!.innerHTML += 
+            '<span style="font-size: 1.4rem; font-weight: 600; color: #1F4E79; letter-spacing: 0.05em;">Caminhões e Ônibus</span>';
+        }}
+      />
+    </div>
+    
+    <h1 className="model-title" style={{ marginTop: '0.5rem' }}>DELIVERY</h1>
+    <p className="model-subtitle">
+      {selectedModel ? selectedModel.name : 'Delivery 6.170'}
+    </p>
+  </div>
+</header>
 
           <div className="vehicle-container">
             <div className="vehicle-viewer-wrapper">
