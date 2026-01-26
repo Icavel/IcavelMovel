@@ -17,13 +17,14 @@ import {
   Image as ImageIcon,
   Ruler,
   Loader2,
-  MessageCircle
+  MessageCircle,
+  Info
 } from "lucide-react";
 import "./ConstellationConfigurator.css";
 import type { TruckModel } from '../TruckModelSelector/TruckModelSelector';
 import Constellation360Viewer from "../Constellation3D/Constellation360Viewer";
 import ChassisLengthSection from "../Shared/ChassisLengthSection";
-import { generateProposalPDF, downloadPDF, safeDownloadPDF } from "../../services/pdfService";
+import { generateProposalPDF, safeDownloadPDF } from "../../services/pdfService";
 
 interface ImageConfig {
   logoUrl: string;
@@ -50,7 +51,6 @@ interface Pacote {
   beneficios: string[];
   selecionado: boolean;
   categoria: string;
-  disponivel: boolean;
 }
 
 interface UserData {
@@ -58,6 +58,22 @@ interface UserData {
   phone: string;
   acceptsMarketing: boolean;
 }
+
+interface LocalChassisConfig {
+  lengths: number[];
+  minLength?: number;
+  maxLength?: number;
+  step?: number;
+  labels?: string[];
+  isSingleOption?: boolean;
+  recommendedLength?: number;
+}
+
+// URLs das imagens (as mesmas do Delivery)
+const UPLOADTHING_IMAGES = {
+  LOGO: "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr03T9lgKNcujJtS6L1nNTlORwF5girxpQAhDe4",
+  TEXT_BRAND: "https://w1d6f4ppqx.ufs.sh/f/ZRWBOk2PmOr0nskeXaZqjhFbPT5JVCkQ1myXAniRBrY3a2xc"
+};
 
 const pacotesConstellation: Pacote[] = [
   {
@@ -79,8 +95,7 @@ const pacotesConstellation: Pacote[] = [
       "Maior durabilidade do acabamento interno",
       "Preparado para condições severas"
     ],
-    selecionado: false,
-    disponivel: true
+    selecionado: false
   },
   {
     codigo: "HLI",
@@ -102,8 +117,7 @@ const pacotesConstellation: Pacote[] = [
       "Painel mais intuitivo com recursos adicionais",
       "Entretenimento em viagens longas"
     ],
-    selecionado: false,
-    disponivel: true
+    selecionado: false
   },
   {
     codigo: "PRI",
@@ -125,8 +139,7 @@ const pacotesConstellation: Pacote[] = [
       "Tecnologia de conectividade embarcada",
       "Ambiente mais agradável"
     ],
-    selecionado: false,
-    disponivel: true
+    selecionado: false
   },
   {
     codigo: "OFF",
@@ -148,8 +161,7 @@ const pacotesConstellation: Pacote[] = [
       "Maior conforto em operações severas",
       "Capacidade de superar obstáculos"
     ],
-    selecionado: false,
-    disponivel: true
+    selecionado: false
   }
 ];
 
@@ -162,19 +174,29 @@ const opcionaisPintura: Pintura[] = [
   { nome: "Cinza MoonStone", colorCode: "#565f6b", categoria: "Metálica" },
   { nome: "Branco Geada", colorCode: "#ffffff", categoria: "Sólida" }
 ];
-export default function ConstellationConfigurator({ 
-  selectedModel, 
-  onBack, 
+
+const getDefaultChassisConfig = (): LocalChassisConfig => {
+  return {
+    lengths: [5200],
+    minLength: 5200,
+    maxLength: 5200,
+    step: 100,
+    labels: ["5,2m"],
+    isSingleOption: true,
+    recommendedLength: 5200
+  };
+};
+
+export default function ConstellationConfigurator({
+  selectedModel,
+  onBack,
   images = {
-    logoUrl: 'https://example.com/default-logo.png', 
+    logoUrl: 'https://example.com/default-logo.png',
     viewerIconUrl: 'https://example.com/default-viewer-icon.png'
   }
 }: Props) {
 
   const [currentStep, setCurrentStep] = useState<"chassis" | "cor" | "pacotes" | "resumo">("chassis");
-  const [customColor, setCustomColor] = useState<string>('#0056b3');
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [viewerMode, setViewerMode] = useState<"static" | "360">("360");
   const [chassisLength, setChassisLength] = useState<number>(5200);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
@@ -186,18 +208,22 @@ export default function ConstellationConfigurator({
     pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
   });
 
-  const isPackageAvailableForModel = (packageCode: string, modelId: string): boolean => {
-    const modelSpecificRestrictions: Record<string, string[]> = {
-      'constellation-14-210-4x2': ['HLI', 'PRI'], 
-      'constellation-17-210-4x2-2': ['HLI', 'PRI'], 
-      'constellation-18-210-4x2': [],
-      'constellation-18-260-4x2': [],
-      'constellation-18-320-4x2': [], 
-      
-    };
+  const getChassisConfig = (): LocalChassisConfig => {
+    if (selectedModel.chassisConfig) {
+      const cfg = selectedModel.chassisConfig;
+      const lengths = cfg.lengths || [5200];
+      return {
+        lengths: lengths,
+        minLength: cfg.minLength || Math.min(...lengths),
+        maxLength: cfg.maxLength || Math.max(...lengths),
+        step: cfg.step || 100,
+        labels: cfg.labels || lengths.map(l => `${(l / 1000).toFixed(1)}m`),
+        isSingleOption: lengths.length === 1,
+        recommendedLength: cfg.recommendedLength || lengths[0]
+      };
+    }
 
-    const restrictedPackages = modelSpecificRestrictions[modelId] || [];
-    return !restrictedPackages.includes(packageCode);
+    return getDefaultChassisConfig();
   };
 
   const handleSelectPintura = (pintura: Pintura) => {
@@ -205,9 +231,6 @@ export default function ConstellationConfigurator({
   };
 
   const handleTogglePacote = (codigo: string) => {
-    const pacote = config.pacotes.find(p => p.codigo === codigo);
-    if (!pacote || !pacote.disponivel) return;
-
     setConfig(prev => ({
       ...prev,
       pacotes: prev.pacotes.map(p =>
@@ -217,30 +240,35 @@ export default function ConstellationConfigurator({
   };
 
   useEffect(() => {
+    const chassisConfig = getChassisConfig();
+
     setConfig({
       pintura: opcionaisPintura[0],
       pacotes: pacotesConstellation.map(p => ({
         ...p,
-        selecionado: false,
-        disponivel: isPackageAvailableForModel(p.codigo, selectedModel.id)
+        selecionado: false
       }))
     });
 
-    if (selectedModel.chassisConfig && selectedModel.chassisConfig.lengths.length > 0) {
-      setChassisLength(selectedModel.chassisConfig.lengths[0]);
-    } else {
-      setChassisLength(5200);
+    if (chassisConfig.recommendedLength) {
+      setChassisLength(chassisConfig.recommendedLength);
+    } else if (chassisConfig.lengths.length > 0) {
+      setChassisLength(chassisConfig.lengths[0]);
     }
 
     setCurrentStep("chassis");
   }, [selectedModel]);
 
   const handleChassisLengthChange = (length: number) => {
-    if (selectedModel.chassisConfig && selectedModel.chassisConfig.lengths.includes(length)) {
+    const chassisConfig = getChassisConfig();
+    const min = chassisConfig.minLength || Math.min(...chassisConfig.lengths);
+    const max = chassisConfig.maxLength || Math.max(...chassisConfig.lengths);
+
+    if (length >= min && length <= max) {
       setChassisLength(length);
     } else {
-      const defaultLength = selectedModel.chassisConfig?.lengths[0] || 5200;
-      setChassisLength(defaultLength);
+      const clampedLength = Math.max(min, Math.min(max, length));
+      setChassisLength(clampedLength);
     }
   };
 
@@ -265,19 +293,6 @@ export default function ConstellationConfigurator({
         return Truck;
       default:
         return Package;
-    }
-  };
-
-  const addCustomColor = (color: string) => {
-    if (/^#[0-9A-F]{6}$/i.test(color)) {
-      const customColorOption: Pintura = {
-        nome: `Personalizado (${color})`,
-        colorCode: color,
-        categoria: "Personalizada",
-      };
-      setConfig(prev => ({ ...prev, pintura: customColorOption }));
-      setCustomColor(color);
-      setShowColorPicker(false);
     }
   };
 
@@ -310,6 +325,8 @@ export default function ConstellationConfigurator({
     setIsGeneratingPDF(true);
 
     try {
+      const chassisConfig = getChassisConfig();
+
       const truckData = {
         name: selectedModel.name,
         variant: selectedModel.variant,
@@ -400,95 +417,46 @@ Agradecemos sua preferência! 🚚
     }
   };
 
-  const ColorPickerModal = () => (
-    <div className="color-picker-modal-overlay" onClick={() => setShowColorPicker(false)}>
-      <div className="color-picker-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="color-picker-header">
-        </div>
-        <div className="color-picker-content">
-          <div className="current-color-display">
-            <div
-              className="color-preview-large"
-              style={{ backgroundColor: customColor }}
-            />
-            <span className="color-hex">{customColor}</span>
-          </div>
+  const renderControls = () => {
+    const chassisConfig = getChassisConfig();
 
-          <input
-            type="color"
-            value={customColor}
-            onChange={(e) => setCustomColor(e.target.value)}
-            className="color-input-native"
-          />
+    switch (currentStep) {
+      case "chassis":
+        return (
+          <div className="step-container">
+            <div className="section-header">
+              <h3 className="section-title">
+                <Ruler size={20} className="section-icon" />
+                Configuração do Chassi
+              </h3>
+              <p className="section-subtitle">
+                Selecione o comprimento do chassi para seu {selectedModel.name}.
+              </p>
+            </div>
 
-          <div className="color-input-manual">
-            <label>Código HEX:</label>
-            <div className="input-with-btn">
-              <input
-                type="text"
-                value={customColor}
-                onChange={(e) => setCustomColor(e.target.value.toUpperCase())}
-                placeholder="#000000"
-                maxLength={7}
-                className="hex-input"
+            <div className="step-content">
+              <ChassisLengthSection
+                selectedLength={chassisLength}
+                onLengthChange={handleChassisLengthChange}
+                selectedTruckModel={{
+                  id: selectedModel.id,
+                  name: selectedModel.name,
+                  variant: selectedModel.variant || '',
+                  chassisConfig: {
+                    lengths: chassisConfig.lengths,
+                    labels: chassisConfig.labels,
+                    minLength: chassisConfig.minLength,
+                    maxLength: chassisConfig.maxLength,
+                    step: chassisConfig.step,
+                    isSingleOption: chassisConfig.isSingleOption,
+                    recommendedLength: chassisConfig.recommendedLength
+                  }
+                }}
               />
-              <button
-                onClick={() => addCustomColor(customColor)}
-                className="apply-btn"
-              >
-                Aplicar
-              </button>
             </div>
           </div>
+        );
 
-          <div className="quick-colors">
-            <h4>Cores Sugeridas</h4>
-            <div className="quick-colors-grid">
-              {[
-                '#0056b3', '#1a5fb4', '#2c3e50', '#ffffff', '#c0392b',
-                '#556B2F', '#E67E22', '#1a1a1a', '#7F8C8D', '#D4AF37'
-              ].map(color => (
-                <button
-                  key={color}
-                  className="quick-color-btn"
-                  style={{ backgroundColor: color }}
-                  onClick={() => setCustomColor(color)}
-                  title={color}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="color-picker-footer">
-          <button onClick={() => addCustomColor(customColor)} className="btn-primary">
-            Usar esta Cor
-          </button>
-          <button onClick={() => setShowColorPicker(false)} className="btn-outline">
-            Cancelar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-const renderControls = () => {
-  switch (currentStep) {
-    case "chassis":
-      return (
-        <div className="step-container">
-          <div className="step-content">
-            <ChassisLengthSection
-              selectedLength={chassisLength}
-              onLengthChange={handleChassisLengthChange}
-              selectedTruckModel={{
-                name: selectedModel.name,
-                chassisConfig: selectedModel.chassisConfig
-              }}
-            />
-          </div>
-        </div>
-      );
-      
       case "cor":
         return (
           <div className="step-container">
@@ -531,8 +499,6 @@ const renderControls = () => {
                   </button>
                 ))}
               </div>
-              <div className="text-center mt-6">
-              </div>
             </div>
           </div>
         );
@@ -547,7 +513,6 @@ const renderControls = () => {
               </h3>
               <p className="section-subtitle">
                 Selecione os pacotes para seu {selectedModel.name}.
-                {config.pacotes.some(p => !p.disponivel) && " Alguns pacotes podem não estar disponíveis para este modelo."}
               </p>
             </div>
 
@@ -559,15 +524,9 @@ const renderControls = () => {
                   return (
                     <div
                       key={pacote.codigo}
-                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''} ${!pacote.disponivel ? 'unavailable' : ''}`}
-                      onClick={() => pacote.disponivel && handleTogglePacote(pacote.codigo)}
+                      className={`pacote-card ${pacote.selecionado ? 'selected' : ''}`}
+                      onClick={() => handleTogglePacote(pacote.codigo)}
                     >
-                      {!pacote.disponivel && (
-                        <div className="unavailable-overlay">
-                          <span>Indisponível para este modelo</span>
-                        </div>
-                      )}
-
                       <div className="pacote-header">
                         <div className="pacote-cabecalho">
                           <div className="pacote-icon-container">
@@ -581,7 +540,7 @@ const renderControls = () => {
                               <span>{pacote.categoria.charAt(0).toUpperCase() + pacote.categoria.slice(1)}</span>
                             </div>
                           </div>
-                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''} ${!pacote.disponivel ? 'disabled' : ''}`}>
+                          <div className={`pacote-checkbox ${pacote.selecionado ? 'checked' : ''}`}>
                             {pacote.selecionado && <Check size={14} />}
                           </div>
                         </div>
@@ -740,35 +699,62 @@ const renderControls = () => {
                   disponibilidade, consulte a concessionária.
                 </p>
               </div>
-
-              <div className="proposal-actions">
-                
-              </div>
             </div>
           </div>
         );
     }
   };
 
+  const chassisConfig = getChassisConfig();
+
   return (
     <div className="constellation-configurator">
-      {showColorPicker && <ColorPickerModal />}
-
       <div className="configurator-content">
         <div className="viewer-container">
           <header className="viewer-header">
             <div className="brand-section">
-              <div className="brand-top">
-                <div className="vw-logo-small">W</div>
-                <div className="separator"></div>
-                <span className="brand-subtitle-small">Caminhões e Ônibus</span>
+              <div className="brand-top" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <img 
+                  src={UPLOADTHING_IMAGES.LOGO} 
+                  alt="Volkswagen" 
+                  style={{
+                    width: '50px',  
+                    height: '60px',
+                    objectFit: 'contain',
+                    display: 'block'
+                  }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.style.display = 'none';
+                    document.querySelector('.brand-top')!.innerHTML += 
+                      '<div style="width: 80px; height: 80px; background: #1F4E79; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900;">VW</div>';
+                  }}
+                />
+                
+                <img 
+                  src={UPLOADTHING_IMAGES.TEXT_BRAND} 
+                  alt="Caminhões e Ônibus" 
+                  style={{
+                    height: '40px', 
+                    width: 'auto',
+                    maxWidth: '500px', 
+                    objectFit: 'contain',
+                    display: 'block'
+                  }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.style.display = 'none';
+                    // Fallback simples
+                    document.querySelector('.brand-top')!.innerHTML += 
+                      '<span style="font-size: 1.4rem; font-weight: 600; color: #1F4E79; letter-spacing: 0.05em;">Caminhões e Ônibus</span>';
+                  }}
+                />
               </div>
-           <h1 className="model-title-premium">CONSTELLATION</h1>
-           <p className="model-subtitle">{selectedModel.name}</p>
-            </div>
-
-            <div className="viewer-toggle-container">
               
+              <h1 className="model-title-premium">CONSTELLATION</h1>
+              <p className="model-subtitle">{selectedModel.name}</p>
             </div>
           </header>
 
@@ -884,20 +870,14 @@ const renderControls = () => {
                 </button>
               )}
 
-              
               <button
                 onClick={() => {
                   setConfig({
                     pintura: opcionaisPintura[0],
-                    pacotes: pacotesConstellation.map(p => ({
-                      ...p,
-                      selecionado: false,
-                      disponivel: isPackageAvailableForModel(p.codigo, selectedModel.id)
-                    }))
+                    pacotes: pacotesConstellation.map(p => ({ ...p, selecionado: false }))
                   });
                   setCurrentStep("chassis");
-                  const defaultLength = selectedModel.chassisConfig?.lengths[0] || 5200;
-                  setChassisLength(defaultLength);
+                  setChassisLength(chassisConfig.recommendedLength || chassisConfig.lengths[0]);
                 }}
                 className="btn-outline btn-sm"
               >

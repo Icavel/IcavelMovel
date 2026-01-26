@@ -1,16 +1,19 @@
 // src/types/chassisTypes.ts
+export interface ChassisConfig {
+  lengths: number[];
+  labels?: string[];
+  images?: Record<number, string>;
+  minLength?: number;
+  maxLength?: number;
+  step?: number;
+  unit?: string;
+  isSingleOption?: boolean;
+  recommendedLength?: number;
+}
+
 export interface ChassisTruckModel {
+  id: string;
   name: string;
-  chassisConfig?: {
-    lengths: number[];
-    labels?: string[];
-    images?: Record<number, string>;
-  };
-  id?: string;
-  category?: string;
-  power?: string;
-  torque?: string;
-  transmission?: string;
-  traction?: string;
-  image?: string;
+  variant?: string;
+  chassisConfig: ChassisConfig;
 }

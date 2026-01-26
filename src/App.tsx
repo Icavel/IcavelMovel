@@ -165,7 +165,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
-// Componente para guardar o estado do caminhão selecionado
 const TruckConfiguratorWrapper: React.FC<{
   type: 'constellation' | 'meteor' | 'delivery';
   onBack: () => void;
@@ -173,7 +172,6 @@ const TruckConfiguratorWrapper: React.FC<{
   const [selectedTruck, setSelectedTruck] = useState<TruckModel | null>(null);
   const navigate = useNavigate();
 
-  // Recuperar o caminhão do localStorage ao montar
   useEffect(() => {
     const savedTruck = localStorage.getItem('selectedTruck');
     if (savedTruck) {
@@ -185,12 +183,10 @@ const TruckConfiguratorWrapper: React.FC<{
         navigate('/truck-selector');
       }
     } else {
-      // Se não houver caminhão salvo, voltar para seleção
       navigate('/truck-selector');
     }
   }, [navigate]);
 
-  // Renderizar o configurador correto baseado no tipo
   if (!selectedTruck) {
     return <div>Carregando configuração...</div>;
   }
@@ -233,11 +229,7 @@ function App() {
   }, []);
 
   const handleTruckConfigure = (model: any) => {
-    // Salvar o caminhão selecionado no localStorage
     localStorage.setItem('selectedTruck', JSON.stringify(model));
-    
-    // Navegar para o configurador correto usando window.location
-    // (mantendo compatibilidade com o código existente)
     if (model.type === 'meteor') {
       window.location.href = '/meteor';
     } else if (model.type === 'constellation') {
@@ -256,11 +248,8 @@ function App() {
     window.location.href = `/${page}`;
   };
 
-  // Função para voltar corretamente
   const handleBackFromConfigurator = () => {
-    // Remover o caminhão salvo
     localStorage.removeItem('selectedTruck');
-    // Voltar para o seletor
     window.location.href = '/truck-selector';
   };
 
@@ -326,7 +315,6 @@ function App() {
             }
           />
 
-          {/* Configuradores com estado mantido */}
           <Route
             path="/meteor"
             element={

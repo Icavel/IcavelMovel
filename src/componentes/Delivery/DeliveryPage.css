@@ -1,8 +1,8 @@
-/* src/components/Delivery/DeliveryConfigurator.css */
+/* src/components/Delivery/DeliveryPage.css */
 :root {
-  --delivery-blue: #0056b3;
-  --delivery-blue-light: #1e88e5;
-  --delivery-blue-dark: #004494;
+  --delivery-green: #525252;       
+  --delivery-green-light: #34d399;  
+  --delivery-green-dark: #059669;  
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
@@ -65,6 +65,59 @@
   flex: 1;
 }
 
+
+.viewer-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 2rem 2.5rem !important;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.50rem;
+}
+
+.brand-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.01rem !important;
+  min-height: 0px !important; 
+}
+
+.vw-logo-small,
+.vw-logo-container,
+.logo-image,
+.brand-subtitle-image,
+.brand-text-container,
+.text-image {
+  all: unset !important;
+  display: block !important;
+}
+
+.model-title {
+  font-size: 3.5rem !important;
+  font-weight: 900 !important;
+  color: #ff9900 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  margin: -0.8rem 0 0 0 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1 !important;
+}
+
+.model-subtitle {
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  color: rgba(201, 171, 0, 0.596) !important;
+  margin: 0 !important;
+  letter-spacing: 0.3rem !important;
+}
+
+
 .vehicle-container {
   width: 100%;
   height: 100%;
@@ -93,7 +146,7 @@
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   border-left: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: -15px 0 50px rgba(240, 245, 255, 0.1);
+  box-shadow: -15px 0 50px rgba(240, 255, 244, 0.1); 
   z-index: 10;
   transition: transform 0.7s ease-in-out;
   height: 100%;
@@ -126,7 +179,7 @@
 }
 
 .tab-button.active {
-  color: var(--delivery-blue);
+  color: var(--delivery-green); 
 }
 
 .tab-content {
@@ -157,7 +210,7 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: var(--delivery-blue);
+  background: var(--delivery-green); 
   border-radius: 2px 2px 0 0;
 }
 
@@ -179,12 +232,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 86, 179, 0.25);
+  background: rgba(16, 185, 129, 0.25); 
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 86, 179, 0.35);
+  background: rgba(16, 185, 129, 0.35); 
 }
 
 .step-container {
@@ -196,7 +249,7 @@
 }
 
 .section-title {
-  color: var(--delivery-blue);
+  color: var(--delivery-green); 
   font-weight: 700;
   font-size: 1.125rem;
   text-transform: uppercase;
@@ -284,7 +337,7 @@
 }
 
 .color-swatch.selected {
-  box-shadow: 0 0 0 2px var(--delivery-blue), 0 0 0 5px white;
+  box-shadow: 0 0 0 2px var(--delivery-green), 0 0 0 5px white; 
   transform: scale(1.1);
 }
 
@@ -308,7 +361,7 @@
 }
 
 .color-name-selected {
-  color: var(--delivery-blue);
+  color: var(--delivery-green); 
   font-weight: 700;
 }
 
@@ -340,7 +393,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: var(--delivery-blue);
+  background: var(--delivery-green); 
   color: white;
   font-size: 0.75rem;
   font-weight: 700;
@@ -433,11 +486,15 @@
   display: flex;
   gap: 0.75rem;
   padding: 1rem;
-  background: #e3f2fd;
-  border: 1px solid #90caf9;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0; 
   border-radius: 0.75rem;
   font-size: 0.75rem;
-  color: #1565c0;
+  color: #065f46; 
+}
+
+.summary-disclaimer svg {
+  color: #10b981; 
 }
 
 .pacotes-grid {
@@ -458,15 +515,15 @@
 }
 
 .pacote-card:hover {
-  border-color: var(--delivery-blue-light);
+  border-color: var(--delivery-green-light); 
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 86, 179, 0.1);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.1); 
 }
 
 .pacote-card.selected {
-  border-color: var(--delivery-blue);
-  background: linear-gradient(to bottom right, rgba(0, 86, 179, 0.02), rgba(0, 86, 179, 0.05));
-  box-shadow: 0 8px 32px rgba(0, 86, 179, 0.15);
+  border-color: var(--delivery-green);
+  background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.02), rgba(16, 185, 129, 0.05));
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15); 
 }
 
 .pacote-header {
@@ -489,7 +546,7 @@
 }
 
 .pacote-icon {
-  color: var(--delivery-blue);
+  color: var(--delivery-green); 
 }
 
 .pacote-titulo-container {
@@ -524,7 +581,7 @@
 }
 
 .pacote-categoria svg {
-  color: var(--delivery-blue);
+  color: var(--delivery-green);
 }
 
 .pacote-checkbox {
@@ -541,8 +598,8 @@
 }
 
 .pacote-checkbox.checked {
-  background: var(--delivery-blue);
-  border-color: var(--delivery-blue);
+  background: var(--delivery-green); 
+  border-color: var(--delivery-green);
   color: white;
 }
 
@@ -586,7 +643,7 @@
 }
 
 .item-check {
-  color: var(--delivery-blue);
+  color: var(--delivery-green);
   flex-shrink: 0;
   margin-top: 0.125rem;
 }
@@ -612,8 +669,8 @@
 }
 
 .beneficio-tag {
-  background: rgba(0, 86, 179, 0.1);
-  color: var(--delivery-blue);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--delivery-green); 
   padding: 0.375rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.75rem;
@@ -625,7 +682,7 @@
   padding: 1.5rem 2rem;
   background: white;
   border-top: 1px solid var(--gray-100);
-  box-shadow: 0 -10px 30px rgba(240, 245, 255, 0.1);
+  box-shadow: 0 -10px 30px rgba(240, 255, 244, 0.1); 
   flex-shrink: 0;
 }
 
@@ -637,7 +694,7 @@
 
 .btn-primary {
   grid-column: span 2;
-  background: var(--delivery-blue);
+  background: var(--delivery-green); 
   color: white;
   padding: 1.25rem;
   border-radius: 0.75rem;
@@ -645,7 +702,7 @@
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 6px 12px rgba(0, 86, 179, 0.25);
+  box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25); 
   transition: all 0.2s;
   border: none;
   cursor: pointer;
@@ -656,9 +713,9 @@
 }
 
 .btn-primary:hover {
-  background: var(--delivery-blue-dark);
+  background: var(--delivery-green-dark); 
   transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 86, 179, 0.35);
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.35);
 }
 
 .btn-primary:active {
@@ -742,111 +799,6 @@
   }
 }
 
-@media (max-width: 1200px) {
-  .viewer-container {
-    flex: 0 0 55%;
-  }
-  
-  .config-panel {
-    flex: 0 0 45%;
-    min-width: 420px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .configurator-content {
-    flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 240px);
-  }
-  
-  .viewer-container {
-    flex: 0 0 45vh;
-    width: 100%;
-  }
-  
-  .config-panel {
-    flex: 1;
-    width: 100%;
-    min-width: auto;
-    height: auto;
-    border-left: none;
-    border-top: 1px solid rgba(0, 86, 179, 0.1);
-  }
-  
-  .config-content {
-    max-height: 50vh;
-    padding: 1.5rem;
-  }
-  
-  .color-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .config-content {
-    padding: 1.25rem;
-    max-height: 40vh;
-  }
-  
-  .color-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-  
-  .color-swatch {
-    width: 4rem;
-    height: 4rem;
-  }
-  
-  .tabs-container {
-    padding: 1rem 0.5rem 0;
-  }
-  
-  .tab-button {
-    padding: 1rem 0.5rem;
-  }
-  
-  .pacote-cabecalho {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .pacote-icon-container {
-    align-self: flex-start;
-  }
-}
-
-@media (max-width: 640px) {
-  .color-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .action-buttons {
-    grid-template-columns: 1fr;
-  }
-  
-  .btn-primary {
-    grid-column: span 1;
-  }
-  
-  .tabs-container {
-    overflow-x: auto;
-  }
-  
-  .tab-button {
-    min-width: 90px;
-  }
-  
-  .pacote-card {
-    padding: 1rem;
-  }
-  
-  .pacote-conteudo {
-    gap: 1rem;
-  }
-  
 .chassis-section {
   padding: 24px;
   background: white;
@@ -870,8 +822,8 @@
 }
 
 .chassis-icon {
-  color: #3b82f6;
-  background: #eff6ff;
+  color: #10b981; 
+  background: #ecfdf5; 
   padding: 10px;
   border-radius: 10px;
 }
@@ -943,14 +895,14 @@
 }
 
 .preset-length-card:hover {
-  border-color: #3b82f6;
+  border-color: #10b981; 
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
 }
 
 .preset-length-card.selected {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #ffffff; 
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
 }
 
 .preset-length-header {
@@ -961,7 +913,7 @@
 }
 
 .preset-length-indicator {
-  background: #3b82f6;
+  background: #ffffff; 
   color: white;
   width: 36px;
   height: 36px;
@@ -983,11 +935,11 @@
 
 .preset-length-applications {
   font-size: 0.875rem;
-  color: #3b82f6;
+  color: #ffffff; 
   font-weight: 500;
   margin-bottom: 12px;
   padding: 6px 12px;
-  background: #eff6ff;
+  background: #ecfdf5; 
   border-radius: 6px;
   display: inline-block;
 }
@@ -1008,7 +960,7 @@
 }
 
 .feature-item svg {
-  color: #10b981;
+  color: #ffffff; 
   flex-shrink: 0;
 }
 
@@ -1016,7 +968,7 @@
   position: absolute;
   top: -10px;
   right: -10px;
-  background: #10b981;
+  background: #ffffff; 
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
@@ -1025,7 +977,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); 
 }
 
 .custom-length-section {
@@ -1072,7 +1024,7 @@
   height: 6px;
   -webkit-appearance: none;
   appearance: none;
-  background: linear-gradient(to right, #e2e8f0, #3b82f6);
+  background: linear-gradient(to right, #e2e8f0, #ffffff);
   border-radius: 3px;
   outline: none;
   margin: 16px 0;
@@ -1083,21 +1035,21 @@
   appearance: none;
   width: 24px;
   height: 24px;
-  background: #3b82f6;
+  background: #ffffff; 
   border: 3px solid white;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.4); 
 }
 
 .chassis-length-slider::-moz-range-thumb {
   width: 24px;
   height: 24px;
-  background: #3b82f6;
+  background: #ffffff;
   border: 3px solid white;
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
 }
 
 .range-value-display {
@@ -1107,7 +1059,7 @@
 
 .range-value-indicator {
   display: inline-block;
-  background: #3b82f6;
+  background: #fcfcfc; 
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -1149,8 +1101,8 @@
 
 .custom-length-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #ffffff; 
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); 
 }
 
 .input-unit {
@@ -1171,12 +1123,12 @@
   background: white;
   padding: 16px;
   border-radius: 10px;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #ffffff; 
 }
 
 .info-icon {
-  background: #eff6ff;
-  color: #3b82f6;
+  background: #ffffff;
+  color: #ffffff; 
   width: 36px;
   height: 36px;
   border-radius: 8px;
@@ -1264,4 +1216,190 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .viewer-container {
+    flex: 0 0 55%;
+  }
+  
+  .config-panel {
+    flex: 0 0 45%;
+    min-width: 420px;
+  }
 }
+
+@media (max-width: 1024px) {
+  .viewer-header {
+    padding: 1.5rem 2rem !important;
+    gap: 1.2rem;
+  }
+  
+  .brand-top {
+    min-height: 50px;
+  }
+  
+  .vw-logo-container {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .brand-text-container {
+    height: 28px;
+  }
+  
+  .brand-text-container img.brand-text-image {
+    max-width: 240px;
+  }
+  
+  .model-title {
+    font-size: 3rem !important;
+  }
+  
+  .model-subtitle {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .viewer-header {
+    padding: 1.25rem 1.5rem !important;
+    gap: 1rem;
+  }
+  
+  .brand-top {
+    min-height: 45px;
+    gap: 0.75rem;
+  }
+  
+  .vw-logo-container {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .vw-logo-container .logo-fallback {
+    font-size: 1.5rem !important;
+  }
+  
+  .separator {
+    width: 20px;
+    height: 1.5px;
+  }
+  
+  .brand-text-container {
+    height: 24px;
+  }
+  
+  .brand-text-container img.brand-text-image {
+    max-width: 200px;
+  }
+  
+  .brand-text-container .text-fallback {
+    font-size: 1rem !important;
+  }
+  
+  .model-title {
+    font-size: 2.5rem !important;
+  }
+  
+  .model-subtitle {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .viewer-header {
+    padding: 1rem 1.25rem !important;
+  }
+  
+  .brand-top {
+    min-height: 40px;
+    gap: 0.5rem;
+  }
+  
+  .vw-logo-container {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .vw-logo-container .logo-fallback {
+    font-size: 1.3rem !important;
+  }
+  
+  .separator {
+    width: 16px;
+  }
+  
+  .brand-text-container {
+    height: 22px;
+  }
+  
+  .brand-text-container img.brand-text-image {
+    max-width: 180px;
+  }
+  
+  .brand-text-container .text-fallback {
+    font-size: 0.9rem !important;
+  }
+  
+  .model-title {
+    font-size: 2.2rem !important;
+  }
+  
+  .model-subtitle {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-top {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: auto;
+  }
+  
+  .vw-logo-container {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .brand-text-container {
+    height: 20px;
+    min-width: 150px;
+  }
+  
+  .brand-text-container img.brand-text-image {
+    max-width: 150px;
+  }
+  
+  .model-title {
+    font-size: 2rem !important;
+  }
+  
+  .model-subtitle {
+    font-size: 0.85rem !important;
+  }
+}
+
+.vw-logo-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.brand-text-container {
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.title-container {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

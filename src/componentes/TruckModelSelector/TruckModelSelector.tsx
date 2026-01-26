@@ -24,8 +24,14 @@ export interface TruckSpec {
 
 export interface ChassisConfig {
   lengths: number[];
-  labels: string[];
-  images: string[];
+  minLength?: number;
+  maxLength?: number;
+  step?: number;
+  unit?: string;
+  recommendedLength?: number;
+  labels?: string[];
+  images?: string[];
+  isSingleOption?: boolean;
 }
 
 export interface TruckModel {
